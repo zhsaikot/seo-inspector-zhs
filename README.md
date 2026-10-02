@@ -11,7 +11,7 @@ A production-ready, modular WordPress SEO Audit & Analytics Dashboard plugin eng
 
 ## 🌟 Highlights & Key Features
 
-- **Direct GitHub ZIP Upload Ready**: Cloned or zipped directly from the repository root, upload and activate straight in WordPress without directory restructuring.
+- **Direct ZIP Upload Ready**: Zip the plugin folder directly, upload and activate straight in WordPress without manual directory shifting.
 - **Modern SaaS UI**: Styled with clean white cards, soft 12px+ rounded corners, subtle drop shadows, fluid typography, and animated SVG progress dials.
 - **Dynamic 17-Point Audit Engine**: Analyzes your live front-end DOM, HTTP response headers, meta tags, and WordPress database records.
 - **Four Core Audit Pillars**:
@@ -25,7 +25,7 @@ A production-ready, modular WordPress SEO Audit & Analytics Dashboard plugin eng
 
 ---
 
-## 📁 Repository & Direct Zip Upload Structure
+## 📁 Plugin Folder & Upload Structure
 
 ```text
 seo-inspector-zhs/
@@ -49,19 +49,16 @@ seo-inspector-zhs/
 ## 🚀 Installation & Quick Start
 
 ### Option A: Upload ZIP via WordPress Admin (Recommended)
-1. Download this repository as a `.zip` file from [GitHub](https://github.com/zhsaikot/seo-inspector-zhs).
-2. Ensure the zip contains the top-level directory `seo-inspector-zhs/`.
-3. In WordPress Admin, navigate to **Plugins > Add New > Upload Plugin**.
-4. Select the `.zip` file and click **Install Now**.
-5. Click **Activate Plugin**.
-6. Access the dashboard from the left admin menu: **SEO Inspector**.
+1. Compress the `seo-inspector-zhs` directory into a `.zip` archive.
+2. In WordPress Admin, navigate to **Plugins > Add New > Upload Plugin**.
+3. Select the `seo-inspector-zhs.zip` file and click **Install Now**.
+4. Click **Activate Plugin**.
+5. Access the dashboard from the left admin menu: **SEO Inspector**.
 
-### Option B: Clone via Git
-```bash
-cd wp-content/plugins/
-git clone https://github.com/zhsaikot/seo-inspector-zhs.git
-```
-Then activate **SEO Inspector** from the WordPress **Plugins** screen.
+### Option B: Direct Directory Deployment
+1. Copy the `seo-inspector-zhs` folder directly into your site's `wp-content/plugins/` directory.
+2. Navigate to **Plugins > Installed Plugins** in WordPress Admin.
+3. Locate **SEO Inspector** and click **Activate**.
 
 ---
 
@@ -131,7 +128,6 @@ All endpoints are registered under the `seo-inspector/v1` namespace and require 
 - **Plugin Name**: SEO Inspector (SEO Inspector ZHS)
 - **Author**: MD. Ziaul Hasan
 - **Author URI**: [https://www.instagram.com/zhsaikot/](https://www.instagram.com/zhsaikot/)
-- **Repository**: [https://github.com/zhsaikot/seo-inspector-zhs](https://github.com/zhsaikot/seo-inspector-zhs.git)
 - **Text Domain**: `seo-inspector-zhs`
 
 ---

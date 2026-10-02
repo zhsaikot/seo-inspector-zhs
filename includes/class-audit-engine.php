@@ -129,7 +129,7 @@ class SEO_Inspector_Audit_Engine {
 			'timeout'     => 15,
 			'redirection' => 5,
 			'sslverify'   => false, // Disabled for local dev/self-signed cert support
-			'user-agent'  => 'SEO-Inspector-ZHS/1.0 (+https://github.com/zhsaikot/seo-inspector-zhs; WordPress/' . get_bloginfo( 'version' ) . ')',
+			'user-agent'  => 'SEO-Inspector-ZHS/1.0 (WordPress/' . get_bloginfo( 'version' ) . '; +https://www.instagram.com/zhsaikot/)',
 			'headers'     => array(
 				'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 			),

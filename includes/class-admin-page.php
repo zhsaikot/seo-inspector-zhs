@@ -107,7 +107,6 @@ class SEO_Inspector_Admin_Page {
 				'siteUrl'     => home_url( '/' ),
 				'authorName'  => 'MD. Ziaul Hasan',
 				'authorUri'   => 'https://www.instagram.com/zhsaikot/',
-				'repoUri'     => 'https://github.com/zhsaikot/seo-inspector-zhs',
 				'initialData' => $initial_audit,
 				'i18n'        => array(
 					'runningAudit'    => __( 'Running live audit & inspecting DOM...', 'seo-inspector-zhs' ),

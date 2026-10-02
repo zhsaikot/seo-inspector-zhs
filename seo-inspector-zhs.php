@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       SEO Inspector
- * Plugin URI:        https://github.com/zhsaikot/seo-inspector-zhs
+ * Plugin URI:        https://www.instagram.com/zhsaikot/
  * Description:       Production-ready, modular WordPress SEO audit and analytics engine with live front-end DOM diagnostics, usability, accessibility, SEO, and GEO/AI readiness verification.
  * Version:           1.0.0
  * Author:            MD. Ziaul Hasan
@@ -133,13 +133,8 @@ final class SEO_Inspector_ZHS {
 			esc_url( admin_url( 'admin.php?page=seo-inspector-zhs' ) ),
 			esc_html__( 'Open Audit Dashboard', 'seo-inspector-zhs' )
 		);
-		$github_link = sprintf(
-			'<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
-			'https://github.com/zhsaikot/seo-inspector-zhs',
-			esc_html__( 'GitHub Repo', 'seo-inspector-zhs' )
-		);
 
-		array_unshift( $links, $dashboard_link, $github_link );
+		array_unshift( $links, $dashboard_link );
 		return $links;
 	}
 
