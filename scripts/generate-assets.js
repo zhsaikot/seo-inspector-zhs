@@ -118,10 +118,10 @@ async function run() {
 		<!-- Checkmark inside lens -->
 		<polyline points="104,106 114,116 134,96" fill="none" stroke="#10b981" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
 
-		<!-- Brand Monogram Tag: ZHS SEO -->
+		<!-- Brand Monogram Tag: SEO AUDIT -->
 		<rect x="42" y="196" width="172" height="34" rx="17" fill="#0f172a" fill-opacity="0.85" stroke="#0284c7" stroke-width="1.8" />
 		<text x="128" y="219" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14.5" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="2.2">
-			ZHS <tspan fill="#38bdf8">SEO</tspan>
+			SEO <tspan fill="#38bdf8">AUDIT</tspan>
 		</text>
 	</svg>
 	`;
@@ -218,7 +218,7 @@ async function run() {
 
 			<!-- Main Title -->
 			<text x="0" y="98" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="64" font-weight="900" fill="#ffffff" letter-spacing="-1.5">
-				SEO Inspector <tspan fill="url(#cyanText)">ZHS</tspan>
+				SEO <tspan fill="url(#cyanText)">Inspector</tspan>
 			</text>
 
 			<!-- Subtitle -->

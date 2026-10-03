@@ -1,4 +1,4 @@
-# SEO Inspector (SEO Inspector ZHS)
+# SEO Inspector
 
 [![WordPress Tested](https://img.shields.io/badge/WordPress-5.8%2B-blue.svg)](https://wordpress.org)
 [![PHP Tested](https://img.shields.io/badge/PHP-7.4%20--%208.3-777bb4.svg)](https://php.net)
@@ -125,7 +125,7 @@ All endpoints are registered under the `seo-inspector/v1` namespace and require 
 
 ## 👨‍💻 Developer & Attribution
 
-- **Plugin Name**: SEO Inspector (SEO Inspector ZHS)
+- **Plugin Name**: SEO Inspector
 - **Author**: MD. Ziaul Hasan
 - **Author URI**: [https://mdziaulhasan.com/](https://mdziaulhasan.com/)
 - **Text Domain**: `seo-inspector-zhs`

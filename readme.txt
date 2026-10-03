@@ -1,4 +1,4 @@
-=== SEO Inspector ZHS ===
+=== SEO Inspector ===
 Contributors: zhsaikot
 Donate link: https://mdziaulhasan.com/
 Tags: seo, audit, accessibility, site-health, json-ld
@@ -13,11 +13,11 @@ Production-ready SEO audit & analytics engine with live front-end DOM diagnostic
 
 == Description ==
 
-**SEO Inspector ZHS** is a production-grade, modular WordPress SEO audit and site-health analytics suite. Engineered with a sleek SaaS interface, it evaluates your live website against a comprehensive 17-point checklist covering modern search engine indexing, Core Web Usability, WCAG 2.4.1 Accessibility, and Generative Engine Optimization (GEO / AI-Readiness).
+**SEO Inspector** is a production-grade, modular WordPress SEO audit and site-health analytics suite. Engineered with a sleek SaaS interface, it evaluates your live website against a comprehensive 17-point checklist covering modern search engine indexing, Core Web Usability, WCAG 2.4.1 Accessibility, and Generative Engine Optimization (GEO / AI-Readiness).
 
-Unlike conventional tools that merely inspect static post meta, SEO Inspector ZHS executes real-time DOM parsing, validates HTTP transport headers, analyzes Schema.org JSON-LD knowledge graphs, and inspects database indexable content depth—delivering actionable, developer-grade insights directly within your WordPress administration dashboard.
+Unlike conventional tools that merely inspect static post meta, SEO Inspector executes real-time DOM parsing, validates HTTP transport headers, analyzes Schema.org JSON-LD knowledge graphs, and inspects database indexable content depth—delivering actionable, developer-grade insights directly within your WordPress administration dashboard.
 
-### Why SEO Inspector ZHS?
+### Why SEO Inspector?
 * **Zero External Cloud Dependencies:** All diagnostics run entirely on your server; your site metrics remain 100% private.
 * **Instant Asynchronous Re-checks:** Execute live re-audits via WordPress REST API with animated visual progress meters.
 * **Client Presentation Ready:** 1-click executive report export featuring print-optimized CSS for PDF delivery, plus structured JSON downloads.
@@ -25,7 +25,7 @@ Unlike conventional tools that merely inspect static post meta, SEO Inspector ZH
 
 == Features ==
 
-SEO Inspector ZHS divides your site's health into four core strategic pillars across 17 automated checks:
+SEO Inspector divides your site's health into four core strategic pillars across 17 automated checks:
 
 ### 1. Usability Diagnostics
 * **HTTPS & SSL Transport Security:** Checks active SSL protocol enforcement and detects Strict-Transport-Security (HSTS) headers.
@@ -57,7 +57,7 @@ SEO Inspector ZHS divides your site's health into four core strategic pillars ac
 ### Automatic Installation (Recommended)
 1. Log in to your WordPress administrator dashboard.
 2. Navigate to **Plugins > Add New**.
-3. Search for `SEO Inspector ZHS`.
+3. Search for `SEO Inspector`.
 4. Click **Install Now**, then click **Activate**.
 5. Access the suite from the left menu: **SEO Inspector**.
 
@@ -79,7 +79,7 @@ Access is strictly restricted to authenticated users with the `manage_options` c
 Generative Engine Optimization (GEO) ensures AI search engines like ChatGPT, Google Gemini, and Perplexity can parse and identify your brand's knowledge graph entity. The plugin validates Schema.org JSON-LD types and `sameAs` profiles to help AI platforms recognize your business.
 
 = Does this plugin replace plugins like Yoast SEO or Rank Math? =
-SEO Inspector ZHS complements any SEO plugin. It acts as an independent diagnostic auditor, verifying that whatever SEO or theme setup you have is actually functioning correctly on the live front-end DOM.
+SEO Inspector complements any SEO plugin. It acts as an independent diagnostic auditor, verifying that whatever SEO or theme setup you have is actually functioning correctly on the live front-end DOM.
 
 = Can I export audit reports for my clients? =
 Yes. Click the **Export Report** button to launch a print-optimized executive report ready for direct printing or saving as a clean PDF. You can also export structured JSON data via the **JSON** button.

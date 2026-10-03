@@ -68,6 +68,8 @@
 	line-height: 1.5;
 	font-size: 14px;
 	-webkit-font-smoothing: antialiased;
+	max-width: 100%;
+	overflow-x: clip;
 }
 
 #seo-inspector-app * {
@@ -176,7 +178,8 @@
 .si-brand-meta {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	flex-wrap: wrap;
+	gap: 6px 8px;
 	margin-top: 4px;
 	font-size: 12.5px;
 	color: var(--si-text-muted);
@@ -225,10 +228,15 @@
 	font-weight: 600;
 	font-size: 12px;
 	border: 1px solid var(--si-border-color);
+	max-width: 260px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .si-audited-page-chip svg {
 	color: var(--si-primary);
+	flex-shrink: 0;
 }
 
 .si-topbar-actions {
@@ -308,9 +316,10 @@
 .si-multiselect-panel {
 	position: absolute;
 	top: calc(100% + 8px);
-	right: 0;
+	left: 0;
+	right: auto;
 	width: 380px;
-	max-width: 90vw;
+	max-width: min(380px, calc(100vw - 40px));
 	background: #ffffff;
 	border: 1px solid var(--si-border-color);
 	border-radius: var(--si-radius-lg);
@@ -1483,15 +1492,29 @@
 /* -------------------------------------------------------------------------
  * 9. RESPONSIVE MEDIA QUERIES
  * ------------------------------------------------------------------------- */
-@media (max-width: 1024px) {
+@media (max-width: 1300px) {
 	.si-topbar {
 		flex-direction: column;
-		align-items: flex-start;
+		align-items: stretch;
+		gap: 16px;
+		padding: 18px 20px;
+	}
+	.si-topbar-brand {
+		width: 100%;
 	}
 	.si-topbar-actions {
 		width: 100%;
 		justify-content: flex-start;
+		flex-wrap: wrap;
+		gap: 10px;
 	}
+	.si-multiselect-dropdown {
+		flex: 0 1 auto;
+		max-width: 100%;
+	}
+}
+
+@media (max-width: 1024px) {
 	.si-toolbar {
 		flex-direction: column;
 		align-items: stretch;
@@ -1499,9 +1522,52 @@
 	.si-toolbar-controls {
 		width: 100%;
 		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 10px;
 	}
 	.si-search-input-wrap {
 		width: 100%;
+	}
+}
+
+@media (max-width: 768px) {
+	#seo-inspector-app.si-dashboard-wrap {
+		margin: 12px 12px 30px 0;
+	}
+	.si-topbar {
+		padding: 16px;
+	}
+	.si-brand-icon {
+		width: 40px;
+		height: 40px;
+	}
+	.si-topbar-actions {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	.si-multiselect-dropdown {
+		width: 100%;
+	}
+	.si-multiselect-trigger {
+		width: 100%;
+		justify-content: space-between;
+	}
+	.si-multiselect-label {
+		max-width: calc(100% - 60px);
+	}
+	.si-multiselect-panel {
+		width: 100%;
+		max-width: 100%;
+		left: 0;
+		right: 0;
+	}
+	.si-topbar-actions .si-btn {
+		width: 100%;
+		justify-content: center;
+	}
+	.si-author-badge {
+		width: 100%;
+		justify-content: center;
 	}
 }
 

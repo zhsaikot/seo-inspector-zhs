@@ -23,7 +23,7 @@ const SCRATCH_ZIP = path.join(process.env.USERPROFILE || 'C:\\Users\\MD. Ziaul H
 
 async function main() {
 	console.log('==========================================================');
-	console.log(' Packaging SEO Inspector ZHS for WordPress (Cross-Platform ZIP)');
+	console.log(' Packaging SEO Inspector for WordPress (Cross-Platform ZIP)');
 	console.log('==========================================================\n');
 
 	// 1. Clean and prepare dist directory

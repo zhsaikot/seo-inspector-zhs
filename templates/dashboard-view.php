@@ -14,8 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Retrieve initial pre-calculated data
-$initial_audit   = $this->engine->run_audit( false );
+// Retrieve initial pre-calculated data (defaulting to single page / home page for rapid initial load)
+$initial_audit   = $this->engine->run_audit( false, home_url( '/' ), 'single' );
 $overall_score   = $initial_audit['score'] ?? 0;
 $grade           = $initial_audit['grade'] ?? 'N/A';
 $grade_label     = $initial_audit['grade_label'] ?? '';
@@ -27,8 +27,8 @@ $checks          = $initial_audit['checks'] ?? array();
 $site_url        = $initial_audit['site_url'] ?? home_url( '/' );
 $page_name       = $initial_audit['page_name'] ?? __( 'Front Page (Homepage)', 'seo-inspector-zhs' );
 $page_url        = $initial_audit['page_url'] ?? $site_url;
-$audit_mode      = $initial_audit['audit_mode'] ?? 'full_site';
-$scope_label     = $initial_audit['scope_label'] ?? $page_name;
+$audit_mode      = $initial_audit['audit_mode'] ?? 'single';
+$scope_label     = ( $audit_mode === 'single' ) ? $page_name : ( $initial_audit['scope_label'] ?? $page_name );
 $scannable_pages = $initial_audit['scannable_pages'] ?? $this->engine->get_scannable_pages();
 $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit['formatted_date'] : current_time( 'mysql' );
 ?>
@@ -88,7 +88,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 					<span class="si-multiselect-label" id="si-multiselect-label">
 						<?php echo esc_html( $scope_label ); ?>
 					</span>
-					<span class="si-multiselect-badge" id="si-multiselect-badge"><?php echo ( $audit_mode === 'full_site' ) ? 'All' : count( $initial_audit['scanned_urls'] ?? array( 1 ) ); ?></span>
+					<span class="si-multiselect-badge" id="si-multiselect-badge"><?php echo ( $audit_mode === 'full_site' ) ? 'All' : ( ( $audit_mode === 'single' ) ? '1' : count( $initial_audit['scanned_urls'] ?? array( 1 ) ) ); ?></span>
 					<svg class="si-ms-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
 				</button>
 
@@ -129,7 +129,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 								$is_front   = ( $sp['id'] === 'front' );
 								$tag_class  = $is_front ? 'tag-front' : ( strpos( $sp['title'], 'Post' ) !== false ? 'tag-post' : 'tag-page' );
 								$tag_name   = $is_front ? __( 'Front Page', 'seo-inspector-zhs' ) : ( strpos( $sp['title'], 'Post' ) !== false ? __( 'Post', 'seo-inspector-zhs' ) : __( 'Page', 'seo-inspector-zhs' ) );
-								$is_checked = ( $audit_mode === 'full_site' || in_array( $sp['url'], $initial_audit['scanned_urls'] ?? array(), true ) || $sp['url'] === $page_url );
+								$is_checked = ( $audit_mode === 'full_site' ) ? true : ( $sp['url'] === $page_url || ( empty( $initial_audit['scanned_urls'] ) && $is_front ) || in_array( $sp['url'], $initial_audit['scanned_urls'] ?? array(), true ) );
 							?>
 								<label class="si-ms-item page-item" data-search="<?php echo esc_attr( strtolower( $sp['title'] . ' ' . $sp['url'] ) ); ?>">
 									<input type="checkbox" class="si-ms-checkbox page-checkbox" value="<?php echo esc_url( $sp['url'] ); ?>" data-title="<?php echo esc_attr( $sp['title'] ); ?>" <?php checked( $is_checked ); ?>>
@@ -147,7 +147,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 
 					<div class="si-ms-footer">
 						<div class="si-ms-status-summary">
-							<span id="si-ms-selected-summary"><?php echo ( $audit_mode === 'full_site' ) ? esc_html__( 'Full website selected', 'seo-inspector-zhs' ) : sprintf( esc_html__( '%d pages selected', 'seo-inspector-zhs' ), count( $initial_audit['scanned_urls'] ?? array() ) ); ?></span>
+							<span id="si-ms-selected-summary"><?php echo ( $audit_mode === 'full_site' ) ? esc_html__( 'Full website selected', 'seo-inspector-zhs' ) : ( ( $audit_mode === 'single' ) ? esc_html__( '1 page selected', 'seo-inspector-zhs' ) : sprintf( esc_html__( '%d pages selected', 'seo-inspector-zhs' ), count( $initial_audit['scanned_urls'] ?? array( 1 ) ) ) ); ?></span>
 						</div>
 						<div class="si-ms-footer-btns">
 							<button type="button" class="si-btn si-btn-primary si-btn-sm" id="si-btn-run-ms-audit">

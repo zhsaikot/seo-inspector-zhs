@@ -90,8 +90,8 @@ class SEO_Inspector_ZHS_Admin_Page {
 			true
 		);
 
-		// Preload initial audit state so the dashboard renders instantly without waiting for extra network round-trips
-		$initial_audit = $this->engine->run_audit( false, '', 'full_site' );
+		// Preload initial audit state for front page (home) so the dashboard renders instantaneously without blocking page loads
+		$initial_audit = $this->engine->run_audit( false, home_url( '/' ), 'single' );
 
 		wp_localize_script(
 			'seo-inspector-zhs-admin-js',
@@ -104,11 +104,11 @@ class SEO_Inspector_ZHS_Admin_Page {
 				'authorUri'          => 'https://mdziaulhasan.com/',
 				'initialData'        => $initial_audit,
 				'scannablePages'     => $this->engine->get_scannable_pages(),
-				'auditMode'          => $initial_audit['audit_mode'] ?? 'full_site',
-				'scopeLabel'         => $initial_audit['scope_label'] ?? __( 'Full Website Audit', 'seo-inspector-zhs' ),
-				'targetUrl'          => $initial_audit['page_url'] ?? home_url( '/' ),
-				'currentPageName'    => $initial_audit['page_name'] ?? __( 'Full Website Audit', 'seo-inspector-zhs' ),
-				'scannedUrls'        => $initial_audit['scanned_urls'] ?? array(),
+				'auditMode'          => 'single',
+				'scopeLabel'         => $initial_audit['page_name'] ?? __( 'Front Page (Homepage)', 'seo-inspector-zhs' ),
+				'targetUrl'          => home_url( '/' ),
+				'currentPageName'    => $initial_audit['page_name'] ?? __( 'Front Page (Homepage)', 'seo-inspector-zhs' ),
+				'scannedUrls'        => array( home_url( '/' ) ),
 				'i18n'               => array(
 					'runningAudit'   => __( 'Running live audit & inspecting DOM...', 'seo-inspector-zhs' ),
 					'auditComplete'  => __( 'SEO Audit completed successfully!', 'seo-inspector-zhs' ),

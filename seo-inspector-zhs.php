@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       SEO Inspector ZHS
+ * Plugin Name:       SEO Inspector
  * Description:       Production-ready, modular WordPress SEO audit and analytics engine with live front-end DOM diagnostics, usability, accessibility, SEO, and GEO/AI readiness verification.
  * Version:           1.1.0
  * Author:            MD. Ziaul Hasan

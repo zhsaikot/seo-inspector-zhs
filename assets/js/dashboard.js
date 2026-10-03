@@ -29,8 +29,8 @@
 		searchQuery: '',
 		isAllExpanded: false,
 		isAuditing: false,
-		auditMode: config.auditMode || 'full_site',
-		selectedUrls: config.scannedUrls && config.scannedUrls.length ? config.scannedUrls : [],
+		auditMode: config.auditMode || 'single',
+		selectedUrls: config.scannedUrls && config.scannedUrls.length ? config.scannedUrls : [ config.targetUrl || config.siteUrl ],
 		isDropdownOpen: false,
 	};
 
@@ -326,7 +326,18 @@
 		state.isDropdownOpen = true;
 		if (elements.msWrap) elements.msWrap.classList.add('open');
 		if (elements.msTrigger) elements.msTrigger.setAttribute('aria-expanded', 'true');
-		if (elements.msPanel) elements.msPanel.style.display = 'block';
+		if (elements.msPanel) {
+			elements.msPanel.style.display = 'block';
+			// Prevent panel from clipping outside screen bounds on laptop screens
+			const rect = elements.msPanel.getBoundingClientRect();
+			if (rect.right > window.innerWidth - 16) {
+				elements.msPanel.style.left = 'auto';
+				elements.msPanel.style.right = '0';
+			} else if (rect.left < 16) {
+				elements.msPanel.style.left = '0';
+				elements.msPanel.style.right = 'auto';
+			}
+		}
 		if (elements.msSearchInput) {
 			setTimeout(function () { elements.msSearchInput.focus(); }, 50);
 		}
