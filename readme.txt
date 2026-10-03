@@ -5,7 +5,7 @@ Tags: seo, audit, accessibility, site-health, json-ld
 Requires at least: 5.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -93,6 +93,12 @@ No. All scanning, parsing, and scoring logic runs 100% locally on your WordPress
 2. Dynamic 17-point diagnostic audit engine showing granular pass/warning results and contextual inline recommendations.
 
 == Changelog ==
+
+= 1.1.0 =
+* Feature: Multi-Page and Full Website Audit System with custom scope selection.
+* Feature: Modern SaaS Multi-Select dropdown with live page search and "Full Website Audit" master toggle.
+* Feature: Granular Affected Pages Breakdown in diagnostic check cards, displaying Page Names, clickable URLs, and specific DOM findings per page.
+* Performance: Optimized batch scanning with 8-second request timeouts and fallback synthetic DOM analysis.
 
 = 1.0.0 =
 * Initial official release for WordPress.org.

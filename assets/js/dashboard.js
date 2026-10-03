@@ -29,6 +29,9 @@
 		searchQuery: '',
 		isAllExpanded: false,
 		isAuditing: false,
+		auditMode: config.auditMode || 'full_site',
+		selectedUrls: config.scannedUrls && config.scannedUrls.length ? config.scannedUrls : [],
+		isDropdownOpen: false,
 	};
 
 	// DOM Elements Cache
@@ -62,9 +65,22 @@
 			banner: document.getElementById('si-notification-banner'),
 			bannerMsg: document.getElementById('si-notification-msg'),
 			lastAuditTime: document.getElementById('si-last-audit-time'),
-			pageSelector: document.getElementById('si-page-selector'),
 			currentPageName: document.getElementById('si-current-page-name'),
 			currentPageUrl: document.getElementById('si-current-page-url'),
+
+			// Multi-Select Elements
+			msWrap: document.getElementById('si-multiselect-wrap'),
+			msTrigger: document.getElementById('si-multiselect-trigger'),
+			msLabel: document.getElementById('si-multiselect-label'),
+			msBadge: document.getElementById('si-multiselect-badge'),
+			msPanel: document.getElementById('si-multiselect-panel'),
+			msSearchInput: document.getElementById('si-ms-search-input'),
+			msSelectAllBtn: document.getElementById('si-ms-select-all'),
+			msClearAllBtn: document.getElementById('si-ms-clear-all'),
+			msMasterCheckbox: document.getElementById('si-cb-full-site'),
+			msPageCheckboxes: document.querySelectorAll('.si-ms-checkbox.page-checkbox'),
+			msSelectedSummary: document.getElementById('si-ms-selected-summary'),
+			btnRunMsAudit: document.getElementById('si-btn-run-ms-audit'),
 
 			// KPIs
 			scoreDialProgress: document.getElementById('si-dial-progress'),
@@ -93,10 +109,101 @@
 	 * Bind event listeners.
 	 */
 	function bindEvents() {
-		// Page Selector dropdown
-		if (elements.pageSelector) {
-			elements.pageSelector.addEventListener('change', function () {
-				triggerLiveAudit(elements.pageSelector.value);
+		// Multi-Select Trigger Toggle
+		if (elements.msTrigger) {
+			elements.msTrigger.addEventListener('click', function (e) {
+				e.stopPropagation();
+				toggleMultiSelectPanel();
+			});
+		}
+
+		// Prevent panel clicks from closing dropdown
+		if (elements.msPanel) {
+			elements.msPanel.addEventListener('click', function (e) {
+				e.stopPropagation();
+			});
+		}
+
+		// Close dropdown on outside click or Escape
+		document.addEventListener('click', function (e) {
+			if (state.isDropdownOpen && elements.msWrap && !elements.msWrap.contains(e.target)) {
+				closeMultiSelectPanel();
+			}
+		});
+
+		document.addEventListener('keydown', function (e) {
+			if (e.key === 'Escape' && state.isDropdownOpen) {
+				closeMultiSelectPanel();
+			}
+		});
+
+		// Master Checkbox: Full Website Audit Toggle
+		if (elements.msMasterCheckbox) {
+			elements.msMasterCheckbox.addEventListener('change', function () {
+				const isChecked = elements.msMasterCheckbox.checked;
+				if (isChecked) {
+					state.auditMode = 'full_site';
+					if (elements.msPageCheckboxes) {
+						elements.msPageCheckboxes.forEach(function (cb) {
+							cb.checked = true;
+						});
+					}
+				} else {
+					state.auditMode = 'multi';
+				}
+				updateMultiSelectUI();
+			});
+		}
+
+		// Page Checkboxes Change
+		if (elements.msPageCheckboxes) {
+			elements.msPageCheckboxes.forEach(function (cb) {
+				cb.addEventListener('change', function () {
+					handlePageCheckboxChange();
+				});
+			});
+		}
+
+		// Select All & Clear All in dropdown
+		if (elements.msSelectAllBtn) {
+			elements.msSelectAllBtn.addEventListener('click', function () {
+				if (elements.msMasterCheckbox) elements.msMasterCheckbox.checked = true;
+				if (elements.msPageCheckboxes) {
+					elements.msPageCheckboxes.forEach(function (cb) { cb.checked = true; });
+				}
+				state.auditMode = 'full_site';
+				updateMultiSelectUI();
+			});
+		}
+
+		if (elements.msClearAllBtn) {
+			elements.msClearAllBtn.addEventListener('click', function () {
+				if (elements.msMasterCheckbox) elements.msMasterCheckbox.checked = false;
+				if (elements.msPageCheckboxes) {
+					elements.msPageCheckboxes.forEach(function (cb) { cb.checked = false; });
+				}
+				state.auditMode = 'multi';
+				updateMultiSelectUI();
+			});
+		}
+
+		// Filter input inside dropdown
+		if (elements.msSearchInput) {
+			elements.msSearchInput.addEventListener('input', function (e) {
+				const query = e.target.value.trim().toLowerCase();
+				const items = elements.msPanel.querySelectorAll('.si-ms-item.page-item');
+				items.forEach(function (item) {
+					const searchStr = item.getAttribute('data-search') || '';
+					item.style.display = (!query || searchStr.indexOf(query) !== -1) ? 'flex' : 'none';
+				});
+			});
+		}
+
+		// Run Audit button inside dropdown
+		if (elements.btnRunMsAudit) {
+			elements.btnRunMsAudit.addEventListener('click', function () {
+				closeMultiSelectPanel();
+				triggerLiveAudit();
 			});
 		}
 
@@ -104,8 +211,7 @@
 		if (elements.btnRecheck) {
 			elements.btnRecheck.addEventListener('click', function (e) {
 				e.preventDefault();
-				const target = elements.pageSelector ? elements.pageSelector.value : '';
-				triggerLiveAudit(target);
+				triggerLiveAudit();
 			});
 		}
 
@@ -206,26 +312,114 @@
 	}
 
 	/**
+	 * Toggle Multi-Select Popover Panel.
+	 */
+	function toggleMultiSelectPanel() {
+		if (state.isDropdownOpen) {
+			closeMultiSelectPanel();
+		} else {
+			openMultiSelectPanel();
+		}
+	}
+
+	function openMultiSelectPanel() {
+		state.isDropdownOpen = true;
+		if (elements.msWrap) elements.msWrap.classList.add('open');
+		if (elements.msTrigger) elements.msTrigger.setAttribute('aria-expanded', 'true');
+		if (elements.msPanel) elements.msPanel.style.display = 'block';
+		if (elements.msSearchInput) {
+			setTimeout(function () { elements.msSearchInput.focus(); }, 50);
+		}
+	}
+
+	function closeMultiSelectPanel() {
+		state.isDropdownOpen = false;
+		if (elements.msWrap) elements.msWrap.classList.remove('open');
+		if (elements.msTrigger) elements.msTrigger.setAttribute('aria-expanded', 'false');
+		if (elements.msPanel) elements.msPanel.style.display = 'none';
+	}
+
+	/**
+	 * Handle page checkbox changes inside the multi-select dropdown.
+	 */
+	function handlePageCheckboxChange() {
+		if (!elements.msPageCheckboxes) return;
+
+		const totalPages  = elements.msPageCheckboxes.length;
+		const checkedCbs  = Array.from(elements.msPageCheckboxes).filter(function (cb) { return cb.checked; });
+		const checkedCount = checkedCbs.length;
+
+		if (checkedCount === totalPages) {
+			state.auditMode = 'full_site';
+			if (elements.msMasterCheckbox) elements.msMasterCheckbox.checked = true;
+		} else if (checkedCount === 1) {
+			state.auditMode = 'single';
+			if (elements.msMasterCheckbox) elements.msMasterCheckbox.checked = false;
+		} else {
+			state.auditMode = 'multi';
+			if (elements.msMasterCheckbox) elements.msMasterCheckbox.checked = false;
+		}
+
+		updateMultiSelectUI();
+	}
+
+	/**
+	 * Update Multi-Select labels and counters based on current selection.
+	 */
+	function updateMultiSelectUI() {
+		if (!elements.msPageCheckboxes) return;
+
+		const totalPages = elements.msPageCheckboxes.length;
+		const checkedCbs = Array.from(elements.msPageCheckboxes).filter(function (cb) { return cb.checked; });
+		const count      = checkedCbs.length;
+
+		state.selectedUrls = checkedCbs.map(function (cb) { return cb.value; });
+
+		if (state.auditMode === 'full_site' || count === totalPages) {
+			if (elements.msLabel) elements.msLabel.textContent = config.i18n.fullWebsite || 'Full Website Audit';
+			if (elements.msBadge) elements.msBadge.textContent = 'All';
+			if (elements.msSelectedSummary) elements.msSelectedSummary.textContent = 'Full website selected (' + totalPages + ' pages)';
+		} else if (count === 1) {
+			const title = checkedCbs[0].getAttribute('data-title') || 'Single Page';
+			if (elements.msLabel) elements.msLabel.textContent = title;
+			if (elements.msBadge) elements.msBadge.textContent = '1';
+			if (elements.msSelectedSummary) elements.msSelectedSummary.textContent = '1 page selected';
+		} else if (count > 1) {
+			if (elements.msLabel) elements.msLabel.textContent = count + ' Pages Selected';
+			if (elements.msBadge) elements.msBadge.textContent = count;
+			if (elements.msSelectedSummary) elements.msSelectedSummary.textContent = count + ' pages selected';
+		} else {
+			if (elements.msLabel) elements.msLabel.textContent = 'No Pages Selected';
+			if (elements.msBadge) elements.msBadge.textContent = '0';
+			if (elements.msSelectedSummary) elements.msSelectedSummary.textContent = 'Select at least 1 page';
+		}
+	}
+
+	/**
 	 * Trigger live audit via WP REST API.
 	 */
-	function triggerLiveAudit(targetUrl) {
+	function triggerLiveAudit() {
 		if (state.isAuditing) return;
 		state.isAuditing = true;
 
-		// Resolve target URL if not provided
-		if (!targetUrl) {
-			if (elements.pageSelector && elements.pageSelector.value) {
-				targetUrl = elements.pageSelector.value;
-			} else if (config.targetUrl) {
-				targetUrl = config.targetUrl;
-			} else {
-				targetUrl = config.siteUrl || '';
-			}
-		}
-
 		// UI Loading State
 		setLoadingState(true);
-		showNotification(config.i18n.runningAudit || 'Auditing...', 'loading');
+		const auditMsg = (state.auditMode === 'full_site')
+			? (config.i18n.runningAudit || 'Running full site audit...')
+			: (config.i18n.runningAudit || 'Auditing selected pages...');
+		showNotification(auditMsg, 'loading');
+
+		// Resolve request payload
+		let payload = {
+			mode: state.auditMode,
+			urls: state.selectedUrls,
+		};
+
+		if (state.auditMode === 'single' && state.selectedUrls.length === 1) {
+			payload.url = state.selectedUrls[0];
+		} else if (state.auditMode === 'full_site') {
+			payload.url = '__full_site__';
+		}
 
 		fetch(config.restUrl + 'audit/run', {
 			method: 'POST',
@@ -233,9 +427,7 @@
 				'X-WP-Nonce': config.nonce,
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({
-				url: targetUrl || '',
-			}),
+			body: JSON.stringify(payload),
 		})
 			.then(function (response) {
 				if (!response.ok) {
@@ -295,16 +487,20 @@
 			elements.lastAuditTime.textContent = data.formatted_date;
 		}
 
-		// 1b. Audited Page Metadata & Selector Sync
-		if (elements.currentPageName && data.page_name) {
-			elements.currentPageName.textContent = data.page_name;
+		// 1b. Audited Scope & Page Metadata
+		const scopeLabel = data.scope_label || data.page_name || 'Website Audit';
+		if (elements.currentPageName) {
+			elements.currentPageName.textContent = scopeLabel;
+		}
+		if (elements.msLabel) {
+			elements.msLabel.textContent = scopeLabel;
+		}
+		if (elements.msBadge) {
+			elements.msBadge.textContent = (data.audit_mode === 'full_site') ? 'All' : (data.scanned_pages_count || 1);
 		}
 		if (elements.currentPageUrl && data.page_url) {
 			elements.currentPageUrl.textContent = data.page_url;
 			elements.currentPageUrl.setAttribute('href', data.page_url);
-		}
-		if (elements.pageSelector && data.page_url) {
-			elements.pageSelector.value = data.page_url;
 		}
 
 		// 2. Score Dial Animation
@@ -445,8 +641,10 @@
 			const summary = escapeHtml(c.summary || '');
 			const details = nl2br(c.details || '');
 			const rec = nl2br(c.recommendation || '');
-			const pageName = escapeHtml(c.page_name || defaultPageName || config.currentPageName || 'Front Page');
-			const pageUrl = escapeHtml(c.page_url || defaultPageUrl || config.targetUrl || config.siteUrl || '');
+			const pageName      = escapeHtml(c.page_name || defaultPageName || config.currentPageName || 'Website');
+			const pageUrl       = escapeHtml(c.page_url || defaultPageUrl || config.targetUrl || config.siteUrl || '');
+			const affectedPages = c.affected_pages || [];
+			const totalScanned  = c.total_scanned_pages || 1;
 
 			let badgeIcon = '';
 			if (status === 'pass') {
@@ -455,6 +653,70 @@
 				badgeIcon = '<span class="si-status-badge partial" title="Partial Warning (Score 0.5)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>';
 			} else {
 				badgeIcon = '<span class="si-status-badge fail" title="Failed Check (Score 0.0)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></span>';
+			}
+
+			// Render Page Scope or Affected Pages section
+			let pageScopeHtml = '';
+			if (affectedPages && affectedPages.length > 0) {
+				let affectedItemsHtml = '';
+				affectedPages.forEach(function (ap) {
+					const apStatus = ap.status || 'fail';
+					const apName = escapeHtml(ap.page_name || 'Webpage');
+					const apUrl = escapeHtml(ap.page_url || '');
+					const apSnippet = ap.snippet ? escapeHtml(ap.snippet) : '';
+					const snippetHtml = apSnippet ? `<div class="si-item-snippet">${apSnippet}</div>` : '';
+
+					affectedItemsHtml += `
+						<div class="si-affected-item status-${apStatus}">
+							<div class="si-affected-item-meta">
+								<span class="si-item-status-dot ${apStatus}"></span>
+								<strong class="si-item-page-name">${apName}</strong>
+								<span class="si-page-sep">&bull;</span>
+								<a href="${apUrl}" target="_blank" rel="noopener noreferrer" class="si-page-url-link">
+									<span>${apUrl}</span>
+									<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+								</a>
+							</div>
+							${snippetHtml}
+						</div>
+					`;
+				});
+
+				pageScopeHtml = `
+					<div class="si-affected-pages-section">
+						<div class="si-affected-header">
+							<span class="si-affected-badge">
+								<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+								<strong>Affected Pages (${affectedPages.length} of ${totalScanned} scanned):</strong>
+							</span>
+						</div>
+						<div class="si-affected-list">
+							${affectedItemsHtml}
+						</div>
+					</div>
+				`;
+			} else if (totalScanned > 1) {
+				pageScopeHtml = `
+					<div class="si-passed-scope-chip">
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+						<span>Passed across all ${totalScanned} audited pages on your website.</span>
+					</div>
+				`;
+			} else {
+				pageScopeHtml = `
+					<div class="si-page-location-chip">
+						<span class="si-page-label">
+							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+							<strong>Page:</strong>
+							<span class="si-chip-page-name">${pageName}</span>
+						</span>
+						<span class="si-page-sep">&bull;</span>
+						<a href="${pageUrl}" target="_blank" rel="noopener noreferrer" class="si-page-url-link" title="Open audited page in a new browser tab">
+							<span>${pageUrl}</span>
+							<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+						</a>
+					</div>
+				`;
 			}
 
 			html += `
@@ -479,18 +741,7 @@
 						</div>
 					</div>
 					<div class="si-check-body" style="display: none;">
-						<div class="si-page-location-chip">
-							<span class="si-page-label">
-								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-								<strong>Page:</strong>
-								<span class="si-chip-page-name">${pageName}</span>
-							</span>
-							<span class="si-page-sep">&bull;</span>
-							<a href="${pageUrl}" target="_blank" rel="noopener noreferrer" class="si-page-url-link" title="Open audited page in a new browser tab">
-								<span>${pageUrl}</span>
-								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-							</a>
-						</div>
+						${pageScopeHtml}
 						<div class="si-check-detail-grid">
 							<div class="si-detail-block findings-block">
 								<div class="si-detail-heading">

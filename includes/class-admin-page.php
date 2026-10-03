@@ -91,33 +91,42 @@ class SEO_Inspector_ZHS_Admin_Page {
 		);
 
 		// Preload initial audit state so the dashboard renders instantly without waiting for extra network round-trips
-		$initial_audit = $this->engine->run_audit( false );
+		$initial_audit = $this->engine->run_audit( false, '', 'full_site' );
 
 		wp_localize_script(
 			'seo-inspector-zhs-admin-js',
 			'seoInspectorConfig',
 			array(
-				'restUrl'     => esc_url_raw( rest_url( 'seo-inspector/v1/' ) ),
-				'nonce'       => wp_create_nonce( 'wp_rest' ),
-				'siteUrl'     => home_url( '/' ),
-				'authorName'  => 'MD. Ziaul Hasan',
-				'authorUri'       => 'https://mdziaulhasan.com/',
-				'initialData'     => $initial_audit,
-				'scannablePages'  => $this->engine->get_scannable_pages(),
-				'targetUrl'       => $initial_audit['page_url'] ?? home_url( '/' ),
-				'currentPageName' => $initial_audit['page_name'] ?? __( 'Front Page (Homepage)', 'seo-inspector-zhs' ),
-				'i18n'            => array(
-					'runningAudit'    => __( 'Running live audit & inspecting DOM...', 'seo-inspector-zhs' ),
-					'auditComplete'   => __( 'SEO Audit completed successfully!', 'seo-inspector-zhs' ),
-					'auditError'      => __( 'Audit encountered a network error. Please try again.', 'seo-inspector-zhs' ),
-					'recheckBtn'      => __( 'Re-check Audit', 'seo-inspector-zhs' ),
-					'rechecking'      => __( 'Auditing...', 'seo-inspector-zhs' ),
-					'exporting'       => __( 'Preparing print report...', 'seo-inspector-zhs' ),
-					'copySuccess'     => __( 'JSON report copied to clipboard!', 'seo-inspector-zhs' ),
-					'allChecks'       => __( 'All Checks', 'seo-inspector-zhs' ),
-					'pass'            => __( 'Pass', 'seo-inspector-zhs' ),
-					'partial'         => __( 'Warning', 'seo-inspector-zhs' ),
-					'fail'            => __( 'Fail', 'seo-inspector-zhs' ),
+				'restUrl'            => esc_url_raw( rest_url( 'seo-inspector/v1/' ) ),
+				'nonce'              => wp_create_nonce( 'wp_rest' ),
+				'siteUrl'            => home_url( '/' ),
+				'authorName'         => 'MD. Ziaul Hasan',
+				'authorUri'          => 'https://mdziaulhasan.com/',
+				'initialData'        => $initial_audit,
+				'scannablePages'     => $this->engine->get_scannable_pages(),
+				'auditMode'          => $initial_audit['audit_mode'] ?? 'full_site',
+				'scopeLabel'         => $initial_audit['scope_label'] ?? __( 'Full Website Audit', 'seo-inspector-zhs' ),
+				'targetUrl'          => $initial_audit['page_url'] ?? home_url( '/' ),
+				'currentPageName'    => $initial_audit['page_name'] ?? __( 'Full Website Audit', 'seo-inspector-zhs' ),
+				'scannedUrls'        => $initial_audit['scanned_urls'] ?? array(),
+				'i18n'               => array(
+					'runningAudit'   => __( 'Running live audit & inspecting DOM...', 'seo-inspector-zhs' ),
+					'auditComplete'  => __( 'SEO Audit completed successfully!', 'seo-inspector-zhs' ),
+					'auditError'     => __( 'Audit encountered a network error. Please try again.', 'seo-inspector-zhs' ),
+					'recheckBtn'     => __( 'Re-check Audit', 'seo-inspector-zhs' ),
+					'rechecking'     => __( 'Auditing...', 'seo-inspector-zhs' ),
+					'exporting'      => __( 'Preparing print report...', 'seo-inspector-zhs' ),
+					'copySuccess'    => __( 'JSON report copied to clipboard!', 'seo-inspector-zhs' ),
+					'allChecks'      => __( 'All Checks', 'seo-inspector-zhs' ),
+					'pass'           => __( 'Pass', 'seo-inspector-zhs' ),
+					'partial'        => __( 'Warning', 'seo-inspector-zhs' ),
+					'fail'           => __( 'Fail', 'seo-inspector-zhs' ),
+					'fullWebsite'    => __( 'Full Website Audit', 'seo-inspector-zhs' ),
+					'selectAll'      => __( 'Select All', 'seo-inspector-zhs' ),
+					'clearAll'       => __( 'Clear All', 'seo-inspector-zhs' ),
+					'runAudit'       => __( 'Run Audit', 'seo-inspector-zhs' ),
+					'pagesSelected'  => __( '%d Pages Selected', 'seo-inspector-zhs' ),
+					'affectedPages'  => __( 'Affected Pages', 'seo-inspector-zhs' ),
 				),
 			)
 		);

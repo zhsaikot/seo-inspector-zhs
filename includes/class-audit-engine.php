@@ -143,13 +143,47 @@ class SEO_Inspector_ZHS_Audit_Engine {
 	}
 
 	/**
-	 * Run a full audit scan on a specific page or the front page.
+	 * Run an audit scan on single or multiple pages or full website.
 	 *
-	 * @param bool   $force      Force fresh audit bypass cache.
-	 * @param string $target_url Specific page URL to audit (defaults to site home).
+	 * @param bool         $force       Force fresh audit bypass cache.
+	 * @param string       $target_url  Specific page URL to audit (or '__full_site__').
+	 * @param string       $mode        Audit mode ('single', 'multi', or 'full_site').
+	 * @param array|string $target_urls Array of target URLs or comma-separated string.
 	 * @return array Structured audit results.
 	 */
-	public function run_audit( $force = false, $target_url = '' ) {
+	public function run_audit( $force = false, $target_url = '', $mode = 'single', $target_urls = array() ) {
+		// Normalize target_urls if string was passed
+		if ( is_string( $target_urls ) && ! empty( $target_urls ) ) {
+			$target_urls = array_filter( array_map( 'trim', explode( ',', $target_urls ) ) );
+		}
+
+		// Detect full website mode
+		if ( $mode === 'full_site' || $target_url === '__full_site__' || $target_url === 'all' ) {
+			return $this->run_multi_page_audit( array(), 'full_site', $force );
+		}
+
+		// Detect multi-page mode if multiple URLs provided
+		if ( ! empty( $target_urls ) && is_array( $target_urls ) && count( $target_urls ) > 1 ) {
+			return $this->run_multi_page_audit( $target_urls, 'multi', $force );
+		}
+
+		// If single URL inside target_urls
+		if ( ! empty( $target_urls ) && is_array( $target_urls ) && count( $target_urls ) === 1 ) {
+			$target_url = reset( $target_urls );
+		}
+
+		// Default to single page audit
+		return $this->run_single_page_audit( $target_url, $force );
+	}
+
+	/**
+	 * Run an audit on a single specific page.
+	 *
+	 * @param string $target_url Page URL.
+	 * @param bool   $force      Bypass cache.
+	 * @return array Structured audit results.
+	 */
+	public function run_single_page_audit( $target_url = '', $force = false ) {
 		$home_url   = home_url( '/' );
 		$target_url = ! empty( $target_url ) ? esc_url_raw( $target_url ) : $home_url;
 		$page_info  = $this->resolve_page_info( $target_url );
@@ -173,8 +207,166 @@ class SEO_Inspector_ZHS_Audit_Engine {
 			}
 		}
 
+		$scan_data  = $this->scan_single_page_dom( $this->current_page_url );
+		$checks     = $scan_data['checks'];
+		$score_data = $this->calculate_scores( $checks );
+
+		// Standardize check structure with affected_pages for template consistency
+		foreach ( $checks as $k => $c ) {
+			if ( $c['status'] !== 'pass' ) {
+				$checks[ $k ]['affected_pages'] = array(
+					array(
+						'page_name' => $this->current_page_name,
+						'page_url'  => $this->current_page_url,
+						'status'    => $c['status'],
+						'summary'   => $c['summary'],
+						'snippet'   => $c['summary'],
+					),
+				);
+				$checks[ $k ]['passed_pages_count'] = 0;
+			} else {
+				$checks[ $k ]['affected_pages']     = array();
+				$checks[ $k ]['passed_pages_count'] = 1;
+			}
+			$checks[ $k ]['total_scanned_pages'] = 1;
+			$checks[ $k ]['audit_scope']         = 'single';
+		}
+
+		$audit_payload = array(
+			'site_url'            => $this->current_page_url,
+			'audit_mode'          => 'single',
+			'scope_label'         => $this->current_page_name,
+			'scanned_pages_count' => 1,
+			'scanned_urls'        => array( $this->current_page_url ),
+			'page_name'           => $this->current_page_name,
+			'page_url'            => $this->current_page_url,
+			'status_code'         => $scan_data['status_code'],
+			'fetch_error'         => $scan_data['fetch_error'],
+			'timestamp'           => time(),
+			'formatted_date'      => current_time( 'mysql' ),
+			'score'               => $score_data['overall_score'],
+			'grade'               => $score_data['grade'],
+			'grade_label'         => $score_data['grade_label'],
+			'passed_count'        => $score_data['passed_count'],
+			'partial_count'       => $score_data['partial_count'],
+			'failed_count'        => $score_data['failed_count'],
+			'total_checks'        => count( $checks ),
+			'category_scores'     => $score_data['category_scores'],
+			'checks'              => array_values( $checks ),
+			'scannable_pages'     => $this->get_scannable_pages(),
+		);
+
+		update_option( $cache_key, $audit_payload, false );
+
+		return $audit_payload;
+	}
+
+	/**
+	 * Run an aggregated audit across multiple pages or the full website.
+	 *
+	 * @param array  $urls  Array of page URLs.
+	 * @param string $mode  Audit mode ('multi' or 'full_site').
+	 * @param bool   $force Bypass cache.
+	 * @return array Structured audit results.
+	 */
+	public function run_multi_page_audit( $urls = array(), $mode = 'multi', $force = false ) {
+		$scannable_all = $this->get_scannable_pages();
+
+		if ( $mode === 'full_site' || empty( $urls ) ) {
+			$mode = 'full_site';
+			// Limit full site audit to top 15 core pages to prevent timeout
+			$core_pages = array_slice( $scannable_all, 0, 15 );
+			$urls       = wp_list_pluck( $core_pages, 'url' );
+		}
+
+		// Sanitize and deduplicate URLs
+		$clean_urls = array();
+		foreach ( $urls as $u ) {
+			$sanitized = esc_url_raw( trim( $u ) );
+			if ( ! empty( $sanitized ) && ! in_array( $sanitized, $clean_urls, true ) ) {
+				$clean_urls[] = $sanitized;
+			}
+		}
+
+		if ( empty( $clean_urls ) ) {
+			$clean_urls[] = home_url( '/' );
+		}
+
+		// Resolve cache key
+		if ( $mode === 'full_site' ) {
+			$cache_key   = self::OPTION_CACHE_KEY . '_full_site';
+			$scope_label = sprintf( __( 'Full Website Audit (%d Pages)', 'seo-inspector-zhs' ), count( $clean_urls ) );
+		} else {
+			$sorted_urls = $clean_urls;
+			sort( $sorted_urls );
+			$cache_key   = self::OPTION_CACHE_KEY . '_multi_' . substr( md5( implode( '|', $sorted_urls ) ), 0, 12 );
+			$scope_label = sprintf( __( 'Multi-Page Audit (%d Pages)', 'seo-inspector-zhs' ), count( $clean_urls ) );
+		}
+
+		if ( ! $force ) {
+			$cached = get_option( $cache_key );
+			if ( ! empty( $cached ) && is_array( $cached ) && isset( $cached['timestamp'] ) ) {
+				if ( ( time() - $cached['timestamp'] ) < ( 12 * HOUR_IN_SECONDS ) ) {
+					return $cached;
+				}
+			}
+		}
+
+		// Scan each target page
+		$scanned_pages = array();
+		foreach ( $clean_urls as $target_url ) {
+			$scanned_pages[] = $this->scan_single_page_dom( $target_url );
+		}
+
+		// Aggregate checks across all scanned pages
+		$aggregated_checks = $this->aggregate_multi_page_checks( $scanned_pages, $mode );
+		$score_data        = $this->calculate_scores( $aggregated_checks );
+
+		$audit_payload = array(
+			'site_url'            => home_url( '/' ),
+			'audit_mode'          => $mode,
+			'scope_label'         => $scope_label,
+			'scanned_pages_count' => count( $clean_urls ),
+			'scanned_urls'        => $clean_urls,
+			'page_name'           => $scope_label,
+			'page_url'            => home_url( '/' ),
+			'status_code'         => 200,
+			'fetch_error'         => null,
+			'timestamp'           => time(),
+			'formatted_date'      => current_time( 'mysql' ),
+			'score'               => $score_data['overall_score'],
+			'grade'               => $score_data['grade'],
+			'grade_label'         => $score_data['grade_label'],
+			'passed_count'        => $score_data['passed_count'],
+			'partial_count'       => $score_data['partial_count'],
+			'failed_count'        => $score_data['failed_count'],
+			'total_checks'        => count( $aggregated_checks ),
+			'category_scores'     => $score_data['category_scores'],
+			'checks'              => array_values( $aggregated_checks ),
+			'scannable_pages'     => $scannable_all,
+		);
+
+		update_option( $cache_key, $audit_payload, false );
+
+		return $audit_payload;
+	}
+
+	/**
+	 * Perform DOM extraction and run all 17 diagnostic checks on a specific URL.
+	 *
+	 * @param string $url Page URL.
+	 * @return array Page scan data including checks array.
+	 */
+	public function scan_single_page_dom( $url = '' ) {
+		$home_url  = home_url( '/' );
+		$url       = ! empty( $url ) ? esc_url_raw( $url ) : $home_url;
+		$page_info = $this->resolve_page_info( $url );
+
+		$this->current_page_name = $page_info['name'];
+		$this->current_page_url  = $page_info['url'];
+
 		// Perform remote request to inspect front-end DOM
-		$fetch_result = $this->fetch_site_html( $this->current_page_url );
+		$fetch_result = $this->fetch_site_html( $this->current_page_url, 8 );
 
 		$html             = $fetch_result['html'];
 		$response_headers = $fetch_result['headers'];
@@ -226,43 +418,138 @@ class SEO_Inspector_ZHS_Audit_Engine {
 		$checks['check_structured_data_json_ld'] = $this->check_structured_data_json_ld( $xpath, $html );
 		$checks['check_ai_entity_readiness']     = $this->check_ai_entity_readiness( $xpath, $html );
 
-		// Calculate total scores and grades
-		$score_data = $this->calculate_scores( $checks );
-
-		$audit_payload = array(
-			'site_url'        => $this->current_page_url,
-			'page_name'       => $this->current_page_name,
-			'page_url'        => $this->current_page_url,
-			'status_code'     => $status_code,
-			'fetch_error'     => $fetch_error,
-			'timestamp'       => time(),
-			'formatted_date'  => current_time( 'mysql' ),
-			'score'           => $score_data['overall_score'],
-			'grade'           => $score_data['grade'],
-			'grade_label'     => $score_data['grade_label'],
-			'passed_count'    => $score_data['passed_count'],
-			'partial_count'   => $score_data['partial_count'],
-			'failed_count'    => $score_data['failed_count'],
-			'total_checks'    => count( $checks ),
-			'category_scores' => $score_data['category_scores'],
-			'checks'          => array_values( $checks ),
-			'scannable_pages' => $this->get_scannable_pages(),
+		return array(
+			'page_name'   => $this->current_page_name,
+			'page_url'    => $this->current_page_url,
+			'status_code' => $status_code,
+			'fetch_error' => $fetch_error,
+			'checks'      => $checks,
 		);
+	}
 
-		update_option( $cache_key, $audit_payload, false );
+	/**
+	 * Aggregate multi-page check results and build granular affected pages list.
+	 *
+	 * @param array  $scanned_pages Array of scan data per page.
+	 * @param string $mode          'multi' or 'full_site'.
+	 * @return array Aggregated checks array.
+	 */
+	private function aggregate_multi_page_checks( array $scanned_pages, $mode = 'multi' ) {
+		$aggregated_checks = array();
+		$total_pages       = count( $scanned_pages );
+		$first_page        = reset( $scanned_pages );
+		$all_check_keys    = array_keys( $first_page['checks'] );
 
-		return $audit_payload;
+		foreach ( $all_check_keys as $check_key ) {
+			$first_check = $first_page['checks'][ $check_key ];
+
+			// Site-wide catalog/sitemap checks take from front page
+			if ( in_array( $check_key, array( 'check_xml_sitemap', 'check_indexable_content_depth' ), true ) ) {
+				$global_check                       = $first_check;
+				$global_check['affected_pages']     = array();
+				$global_check['passed_pages_count'] = ( $global_check['status'] === 'pass' ) ? $total_pages : 0;
+				$global_check['total_scanned_pages']= $total_pages;
+				$global_check['audit_scope']        = $mode;
+				$aggregated_checks[ $check_key ]    = $global_check;
+				continue;
+			}
+
+			$affected_pages = array();
+			$passed_pages   = array();
+			$findings_lines = array();
+
+			foreach ( $scanned_pages as $page_res ) {
+				$p_name  = $page_res['page_name'];
+				$p_url   = $page_res['page_url'];
+				$p_check = $page_res['checks'][ $check_key ] ?? null;
+
+				if ( ! $p_check ) {
+					continue;
+				}
+
+				if ( $p_check['status'] === 'pass' ) {
+					$passed_pages[] = array(
+						'page_name' => $p_name,
+						'page_url'  => $p_url,
+						'status'    => 'pass',
+						'summary'   => $p_check['summary'],
+					);
+				} else {
+					$snippet = $p_check['summary'];
+					$affected_pages[] = array(
+						'page_name' => $p_name,
+						'page_url'  => $p_url,
+						'status'    => $p_check['status'],
+						'summary'   => $p_check['summary'],
+						'snippet'   => $snippet,
+					);
+					$findings_lines[] = sprintf( "• %s (%s)\n  [%s] %s", $p_name, $p_url, strtoupper( $p_check['status'] ), $snippet );
+				}
+			}
+
+			$affected_count = count( $affected_pages );
+			$passed_count   = count( $passed_pages );
+
+			if ( $affected_count === 0 ) {
+				$agg_status  = 'pass';
+				$agg_score   = 1.0;
+				$agg_summary = sprintf( __( 'Passed across all %d audited pages.', 'seo-inspector-zhs' ), $total_pages );
+				$agg_details = sprintf( __( 'Audited Scope: %1$d pages scanned.' . "\n\n" . 'All %1$d pages fully comply with SEO guidelines.', 'seo-inspector-zhs' ), $total_pages );
+			} elseif ( $affected_count === $total_pages ) {
+				$agg_status  = 'fail';
+				$agg_score   = 0.0;
+				$agg_summary = sprintf( __( 'Issues detected on all %d audited pages.', 'seo-inspector-zhs' ), $total_pages );
+				$agg_details = sprintf(
+					__( 'Audited Scope: %1$d pages scanned (All %1$d pages require attention).' . "\n\n" . 'Affected Pages Breakdown:' . "\n" . '%2$s', 'seo-inspector-zhs' ),
+					$total_pages,
+					implode( "\n\n", $findings_lines )
+				);
+			} else {
+				$agg_status  = 'partial';
+				$agg_score   = 0.5;
+				$agg_summary = sprintf( __( 'Issues detected on %1$d of %2$d audited pages (%3$d pages passed).', 'seo-inspector-zhs' ), $affected_count, $total_pages, $passed_count );
+				$agg_details = sprintf(
+					__( 'Audited Scope: %1$d pages scanned (%2$d affected, %3$d passed).' . "\n\n" . 'Affected Pages Breakdown:' . "\n" . '%4$s', 'seo-inspector-zhs' ),
+					$total_pages,
+					$affected_count,
+					$passed_count,
+					implode( "\n\n", $findings_lines )
+				);
+			}
+
+			$aggregated_checks[ $check_key ] = array(
+				'id'                  => $first_check['id'],
+				'title'               => $first_check['title'],
+				'category'            => $first_check['category'],
+				'category_label'      => $first_check['category_label'],
+				'status'              => $agg_status,
+				'score'               => $agg_score,
+				'impact'              => $first_check['impact'],
+				'page_name'           => ( $mode === 'full_site' ) ? __( 'Full Website Audit', 'seo-inspector-zhs' ) : sprintf( __( 'Multi-Page Audit (%d pages)', 'seo-inspector-zhs' ), $total_pages ),
+				'page_url'            => home_url( '/' ),
+				'summary'             => $agg_summary,
+				'details'             => $agg_details,
+				'recommendation'      => $first_check['recommendation'],
+				'affected_pages'      => $affected_pages,
+				'passed_pages_count'  => $passed_count,
+				'total_scanned_pages' => $total_pages,
+				'audit_scope'         => $mode,
+			);
+		}
+
+		return $aggregated_checks;
 	}
 
 	/**
 	 * Fetch target HTML with WordPress HTTP API.
 	 *
-	 * @param string $url Target URL to fetch.
+	 * @param string $url     Target URL to fetch.
+	 * @param int    $timeout Timeout in seconds.
 	 * @return array HTML string, headers, HTTP status, and error message.
 	 */
-	private function fetch_site_html( $url ) {
+	private function fetch_site_html( $url, $timeout = 8 ) {
 		$args = array(
-			'timeout'     => 15,
+			'timeout'     => $timeout,
 			'redirection' => 5,
 			'sslverify'   => false, // Disabled for local dev/self-signed cert support
 			'user-agent'  => 'SEO-Inspector-ZHS/1.0 (WordPress/' . get_bloginfo( 'version' ) . '; +https://mdziaulhasan.com/)',

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       SEO Inspector ZHS
  * Description:       Production-ready, modular WordPress SEO audit and analytics engine with live front-end DOM diagnostics, usability, accessibility, SEO, and GEO/AI readiness verification.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Author:            MD. Ziaul Hasan
  * Author URI:        https://mdziaulhasan.com/
  * Text Domain:       seo-inspector-zhs
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define core plugin constants
-define( 'SEO_INSPECTOR_ZHS_VERSION', '1.0.0' );
+define( 'SEO_INSPECTOR_ZHS_VERSION', '1.1.0' );
 define( 'SEO_INSPECTOR_ZHS_FILE', __FILE__ );
 define( 'SEO_INSPECTOR_ZHS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SEO_INSPECTOR_ZHS_URL', plugin_dir_url( __FILE__ ) );

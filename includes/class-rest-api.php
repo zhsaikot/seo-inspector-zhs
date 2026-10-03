@@ -114,13 +114,25 @@ class SEO_Inspector_ZHS_Rest_API {
 	 * @return WP_REST_Response
 	 */
 	public function get_audit( $request ) {
-		$target_url = '';
-		$url_param  = $request->get_param( 'url' );
+		$mode        = sanitize_key( $request->get_param( 'mode' ) ?: 'single' );
+		$target_url  = '';
+		$target_urls = array();
+
+		$url_param = $request->get_param( 'url' );
 		if ( ! empty( $url_param ) ) {
 			$target_url = esc_url_raw( $url_param );
 		}
 
-		$audit = $this->engine->run_audit( false, $target_url );
+		$urls_param = $request->get_param( 'urls' );
+		if ( ! empty( $urls_param ) ) {
+			if ( is_array( $urls_param ) ) {
+				$target_urls = array_map( 'esc_url_raw', $urls_param );
+			} elseif ( is_string( $urls_param ) ) {
+				$target_urls = array_map( 'esc_url_raw', array_filter( array_map( 'trim', explode( ',', $urls_param ) ) ) );
+			}
+		}
+
+		$audit = $this->engine->run_audit( false, $target_url, $mode, $target_urls );
 		return new WP_REST_Response(
 			array(
 				'success' => true,
@@ -138,15 +150,40 @@ class SEO_Inspector_ZHS_Rest_API {
 	 * @return WP_REST_Response
 	 */
 	public function run_audit( $request ) {
-		$target_url = '';
+		$target_url  = '';
+		$target_urls = array();
+		$mode        = 'single';
+
 		$json_params = $request->get_json_params();
-		if ( ! empty( $json_params['url'] ) ) {
-			$target_url = esc_url_raw( $json_params['url'] );
-		} elseif ( ! empty( $request->get_param( 'url' ) ) ) {
-			$target_url = esc_url_raw( $request->get_param( 'url' ) );
+		if ( is_array( $json_params ) ) {
+			if ( ! empty( $json_params['mode'] ) ) {
+				$mode = sanitize_key( $json_params['mode'] );
+			}
+			if ( ! empty( $json_params['url'] ) ) {
+				$target_url = esc_url_raw( $json_params['url'] );
+			}
+			if ( ! empty( $json_params['urls'] ) && is_array( $json_params['urls'] ) ) {
+				$target_urls = array_map( 'esc_url_raw', $json_params['urls'] );
+			}
 		}
 
-		$audit = $this->engine->run_audit( true, $target_url );
+		// Fallback to request parameters
+		if ( empty( $target_url ) && ! empty( $request->get_param( 'url' ) ) ) {
+			$target_url = esc_url_raw( $request->get_param( 'url' ) );
+		}
+		if ( empty( $target_urls ) && ! empty( $request->get_param( 'urls' ) ) ) {
+			$urls_param = $request->get_param( 'urls' );
+			if ( is_array( $urls_param ) ) {
+				$target_urls = array_map( 'esc_url_raw', $urls_param );
+			} elseif ( is_string( $urls_param ) ) {
+				$target_urls = array_map( 'esc_url_raw', array_filter( array_map( 'trim', explode( ',', $urls_param ) ) ) );
+			}
+		}
+		if ( $mode === 'single' && ! empty( $request->get_param( 'mode' ) ) ) {
+			$mode = sanitize_key( $request->get_param( 'mode' ) );
+		}
+
+		$audit = $this->engine->run_audit( true, $target_url, $mode, $target_urls );
 		return new WP_REST_Response(
 			array(
 				'success' => true,
