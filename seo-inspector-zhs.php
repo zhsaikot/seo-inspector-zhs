@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name:       SEO Inspector
- * Plugin URI:        https://www.instagram.com/zhsaikot/
+ * Plugin URI:        https://mdziaulhasan.com/
  * Description:       Production-ready, modular WordPress SEO audit and analytics engine with live front-end DOM diagnostics, usability, accessibility, SEO, and GEO/AI readiness verification.
  * Version:           1.0.0
  * Author:            MD. Ziaul Hasan
- * Author URI:        https://www.instagram.com/zhsaikot/
+ * Author URI:        https://mdziaulhasan.com/
  * Text Domain:       seo-inspector-zhs
  * Domain Path:       /languages
  * License:           GPL-2.0+

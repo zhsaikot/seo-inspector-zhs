@@ -6,7 +6,7 @@
  *
  * @package    SEO_Inspector_ZHS
  * @subpackage SEO_Inspector_ZHS/templates
- * @author     MD. Ziaul Hasan <https://www.instagram.com/zhsaikot/>
+ * @author     MD. Ziaul Hasan <https://mdziaulhasan.com/>
  * @license    GPL-2.0+
  */
 
@@ -97,7 +97,7 @@ $last_audit    = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit['f
 
 			<!-- Author Profile Attribution -->
 			<div class="si-author-badge">
-				<a href="https://www.instagram.com/zhsaikot/" target="_blank" rel="noopener noreferrer" class="si-author-link" title="<?php esc_attr_e( 'Lead Developer: MD. Ziaul Hasan', 'seo-inspector-zhs' ); ?>">
+				<a href="https://mdziaulhasan.com/" target="_blank" rel="noopener noreferrer" class="si-author-link" title="<?php esc_attr_e( 'Lead Developer: MD. Ziaul Hasan', 'seo-inspector-zhs' ); ?>">
 					<div class="si-author-avatar">ZH</div>
 					<div class="si-author-text">
 						<span class="si-author-role"><?php esc_html_e( 'Plugin Author', 'seo-inspector-zhs' ); ?></span>
@@ -386,7 +386,7 @@ $last_audit    = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit['f
 		</div>
 		<div class="si-footer-right">
 			<span><?php esc_html_e( 'Engineered by', 'seo-inspector-zhs' ); ?></span>
-			<a href="https://www.instagram.com/zhsaikot/" target="_blank" rel="noopener noreferrer" class="si-footer-author">MD. Ziaul Hasan</a>
+			<a href="https://mdziaulhasan.com/" target="_blank" rel="noopener noreferrer" class="si-footer-author">MD. Ziaul Hasan</a>
 		</div>
 	</footer>
 

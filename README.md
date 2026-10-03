@@ -3,7 +3,7 @@
 [![WordPress Tested](https://img.shields.io/badge/WordPress-5.8%2B-blue.svg)](https://wordpress.org)
 [![PHP Tested](https://img.shields.io/badge/PHP-7.4%20--%208.3-777bb4.svg)](https://php.net)
 [![License: GPL v2+](https://img.shields.io/badge/License-GPLv2%2B-green.svg)](http://www.gnu.org/licenses/gpl-2.0.txt)
-[![Developer](https://img.shields.io/badge/Author-MD.%20Ziaul%20Hasan-0284c7.svg)](https://www.instagram.com/zhsaikot/)
+[![Developer](https://img.shields.io/badge/Author-MD.%20Ziaul%20Hasan-0284c7.svg)](https://mdziaulhasan.com/)
 
 A production-ready, modular WordPress SEO Audit & Analytics Dashboard plugin engineered with a clean SaaS aesthetic, live DOM/database diagnostics, real-time re-checks via WordPress REST API, and client-ready export reports.
 
@@ -127,7 +127,7 @@ All endpoints are registered under the `seo-inspector/v1` namespace and require 
 
 - **Plugin Name**: SEO Inspector (SEO Inspector ZHS)
 - **Author**: MD. Ziaul Hasan
-- **Author URI**: [https://www.instagram.com/zhsaikot/](https://www.instagram.com/zhsaikot/)
+- **Author URI**: [https://mdziaulhasan.com/](https://mdziaulhasan.com/)
 - **Text Domain**: `seo-inspector-zhs`
 
 ---

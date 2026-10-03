@@ -6,7 +6,7 @@
  *
  * @package    SEO_Inspector_ZHS
  * @subpackage SEO_Inspector_ZHS/assets/js
- * @author     MD. Ziaul Hasan <https://www.instagram.com/zhsaikot/>
+ * @author     MD. Ziaul Hasan <https://mdziaulhasan.com/>
  * @license    GPL-2.0+
  */
 

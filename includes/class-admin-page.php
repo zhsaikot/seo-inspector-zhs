@@ -7,7 +7,7 @@
  *
  * @package    SEO_Inspector_ZHS
  * @subpackage SEO_Inspector_ZHS/includes
- * @author     MD. Ziaul Hasan <https://www.instagram.com/zhsaikot/>
+ * @author     MD. Ziaul Hasan <https://mdziaulhasan.com/>
  * @license    GPL-2.0+
  */
 
@@ -106,7 +106,7 @@ class SEO_Inspector_Admin_Page {
 				'nonce'       => wp_create_nonce( 'wp_rest' ),
 				'siteUrl'     => home_url( '/' ),
 				'authorName'  => 'MD. Ziaul Hasan',
-				'authorUri'   => 'https://www.instagram.com/zhsaikot/',
+				'authorUri'   => 'https://mdziaulhasan.com/',
 				'initialData' => $initial_audit,
 				'i18n'        => array(
 					'runningAudit'    => __( 'Running live audit & inspecting DOM...', 'seo-inspector-zhs' ),

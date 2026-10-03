@@ -7,7 +7,7 @@
  *
  * @package    SEO_Inspector_ZHS
  * @subpackage SEO_Inspector_ZHS/includes
- * @author     MD. Ziaul Hasan <https://www.instagram.com/zhsaikot/>
+ * @author     MD. Ziaul Hasan <https://mdziaulhasan.com/>
  * @license    GPL-2.0+
  */
 
@@ -129,7 +129,7 @@ class SEO_Inspector_Audit_Engine {
 			'timeout'     => 15,
 			'redirection' => 5,
 			'sslverify'   => false, // Disabled for local dev/self-signed cert support
-			'user-agent'  => 'SEO-Inspector-ZHS/1.0 (WordPress/' . get_bloginfo( 'version' ) . '; +https://www.instagram.com/zhsaikot/)',
+			'user-agent'  => 'SEO-Inspector-ZHS/1.0 (WordPress/' . get_bloginfo( 'version' ) . '; +https://mdziaulhasan.com/)',
 			'headers'     => array(
 				'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 			),
