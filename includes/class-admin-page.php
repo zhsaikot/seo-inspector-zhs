@@ -8,12 +8,14 @@
  * @package    SEO_Inspector_ZHS
  * @subpackage SEO_Inspector_ZHS/includes
  * @author     MD. Ziaul Hasan <https://mdziaulhasan.com/>
- * @license    GPL-2.0+
+ * @license    GPL-2.0-or-later
  */
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-class SEO_Inspector_Admin_Page {
+class SEO_Inspector_ZHS_Admin_Page {
 
 	/**
 	 * Hook suffix for the admin menu page.
@@ -25,16 +27,16 @@ class SEO_Inspector_Admin_Page {
 	/**
 	 * Audit engine instance.
 	 *
-	 * @var SEO_Inspector_Audit_Engine
+	 * @var SEO_Inspector_ZHS_Audit_Engine
 	 */
 	private $engine;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param SEO_Inspector_Audit_Engine $engine
+	 * @param SEO_Inspector_ZHS_Audit_Engine $engine
 	 */
-	public function __construct( SEO_Inspector_Audit_Engine $engine ) {
+	public function __construct( SEO_Inspector_ZHS_Audit_Engine $engine ) {
 		$this->engine = $engine;
 
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
@@ -72,15 +74,15 @@ class SEO_Inspector_Admin_Page {
 
 		// CSS styles
 		wp_enqueue_style(
-			'seo-inspector-dashboard',
+			'seo-inspector-zhs-admin-css',
 			SEO_INSPECTOR_ZHS_URL . 'assets/css/dashboard.css',
 			array(),
 			SEO_INSPECTOR_ZHS_VERSION
 		);
 
-		// Google Fonts (Inter font family for clean SaaS UI look)
+		// Google Fonts (Plus Jakarta Sans & JetBrains Mono for SaaS UI)
 		wp_enqueue_style(
-			'seo-inspector-fonts',
+			'seo-inspector-zhs-fonts',
 			'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap',
 			array(),
 			null
@@ -88,7 +90,7 @@ class SEO_Inspector_Admin_Page {
 
 		// JavaScript logic
 		wp_enqueue_script(
-			'seo-inspector-dashboard',
+			'seo-inspector-zhs-admin-js',
 			SEO_INSPECTOR_ZHS_URL . 'assets/js/dashboard.js',
 			array(),
 			SEO_INSPECTOR_ZHS_VERSION,
@@ -99,7 +101,7 @@ class SEO_Inspector_Admin_Page {
 		$initial_audit = $this->engine->run_audit( false );
 
 		wp_localize_script(
-			'seo-inspector-dashboard',
+			'seo-inspector-zhs-admin-js',
 			'seoInspectorConfig',
 			array(
 				'restUrl'     => esc_url_raw( rest_url( 'seo-inspector/v1/' ) ),

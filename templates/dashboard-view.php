@@ -7,10 +7,12 @@
  * @package    SEO_Inspector_ZHS
  * @subpackage SEO_Inspector_ZHS/templates
  * @author     MD. Ziaul Hasan <https://mdziaulhasan.com/>
- * @license    GPL-2.0+
+ * @license    GPL-2.0-or-later
  */
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 // Retrieve initial pre-calculated data
 $initial_audit = $this->engine->run_audit( false );

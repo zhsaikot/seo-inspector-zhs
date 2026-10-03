@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       SEO Inspector
+ * Plugin Name:       SEO Inspector ZHS
  * Plugin URI:        https://mdziaulhasan.com/
  * Description:       Production-ready, modular WordPress SEO audit and analytics engine with live front-end DOM diagnostics, usability, accessibility, SEO, and GEO/AI readiness verification.
  * Version:           1.0.0
@@ -8,9 +8,10 @@
  * Author URI:        https://mdziaulhasan.com/
  * Text Domain:       seo-inspector-zhs
  * Domain Path:       /languages
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * License:           GPL-2.0-or-later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Requires at least: 5.8
+ * Tested up to:      6.7
  * Requires PHP:      7.4
  *
  * @package           SEO_Inspector_ZHS
@@ -18,7 +19,9 @@
  * @copyright         Copyright (C) 2026 MD. Ziaul Hasan. All rights reserved.
  */
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 // Define core plugin constants
 define( 'SEO_INSPECTOR_ZHS_VERSION', '1.0.0' );
@@ -42,21 +45,21 @@ final class SEO_Inspector_ZHS {
 	/**
 	 * Audit engine instance.
 	 *
-	 * @var SEO_Inspector_Audit_Engine
+	 * @var SEO_Inspector_ZHS_Audit_Engine
 	 */
 	public $audit_engine;
 
 	/**
 	 * Admin page loader instance.
 	 *
-	 * @var SEO_Inspector_Admin_Page
+	 * @var SEO_Inspector_ZHS_Admin_Page
 	 */
 	public $admin_page;
 
 	/**
 	 * REST API controller instance.
 	 *
-	 * @var SEO_Inspector_Rest_API
+	 * @var SEO_Inspector_ZHS_Rest_API
 	 */
 	public $rest_api;
 
@@ -94,9 +97,9 @@ final class SEO_Inspector_ZHS {
 	 * Initialize components.
 	 */
 	private function init_components() {
-		$this->audit_engine = new SEO_Inspector_Audit_Engine();
-		$this->admin_page   = new SEO_Inspector_Admin_Page( $this->audit_engine );
-		$this->rest_api     = new SEO_Inspector_Rest_API( $this->audit_engine );
+		$this->audit_engine = new SEO_Inspector_ZHS_Audit_Engine();
+		$this->admin_page   = new SEO_Inspector_ZHS_Admin_Page( $this->audit_engine );
+		$this->rest_api     = new SEO_Inspector_ZHS_Rest_API( $this->audit_engine );
 	}
 
 	/**
@@ -143,7 +146,7 @@ final class SEO_Inspector_ZHS {
 	 */
 	public function activate() {
 		// Run initial audit to prime transient cache if not already set
-		if ( ! get_option( SEO_Inspector_Audit_Engine::OPTION_CACHE_KEY ) ) {
+		if ( ! get_option( SEO_Inspector_ZHS_Audit_Engine::OPTION_CACHE_KEY ) ) {
 			$this->audit_engine->run_audit( true );
 		}
 	}

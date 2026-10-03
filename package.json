@@ -1,0 +1,24 @@
+{
+  "name": "seo-inspector-zhs",
+  "version": "1.0.0",
+  "description": "[![WordPress Tested](https://img.shields.io/badge/WordPress-5.8%2B-blue.svg)](https://wordpress.org)\r [![PHP Tested](https://img.shields.io/badge/PHP-7.4%20--%208.3-777bb4.svg)](https://php.net)\r [![License: GPL v2+](https://img.shields.io/badge/License-GPLv2%2B-green.svg)](http://www.gnu.org/licenses/gpl-2.0.txt)\r [![Developer](https://img.shields.io/badge/Author-MD.%20Ziaul%20Hasan-0284c7.svg)](https://mdziaulhasan.com/)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhsaikot/seo-inspector-zhs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/zhsaikot/seo-inspector-zhs/issues"
+  },
+  "homepage": "https://github.com/zhsaikot/seo-inspector-zhs#readme",
+  "devDependencies": {
+    "sharp": "^0.35.5"
+  }
+}

@@ -8,12 +8,14 @@
  * @package    SEO_Inspector_ZHS
  * @subpackage SEO_Inspector_ZHS/includes
  * @author     MD. Ziaul Hasan <https://mdziaulhasan.com/>
- * @license    GPL-2.0+
+ * @license    GPL-2.0-or-later
  */
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-class SEO_Inspector_Audit_Engine {
+class SEO_Inspector_ZHS_Audit_Engine {
 
 	/**
 	 * Option key used for transient/cached audit results.
