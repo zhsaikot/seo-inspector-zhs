@@ -143,30 +143,6 @@ class SEO_Inspector_ZHS_Audit_Engine {
 			// In restricted environments or local servers where loopback is blocked, fallback to simulated render or template buffer
 			$error_message = $response->get_error_message();
 
-			// Fallback: Try file_get_contents or curl if available
-			$fallback_html = '';
-			if ( function_exists( 'curl_init' ) ) {
-				$ch = curl_init();
-				curl_setopt( $ch, CURLOPT_URL, $url );
-				curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-				curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
-				curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, false );
-				curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
-				curl_setopt( $ch, CURLOPT_TIMEOUT, 10 );
-				curl_setopt( $ch, CURLOPT_USERAGENT, 'SEO-Inspector-ZHS/1.0' );
-				$fallback_html = curl_exec( $ch );
-				$http_code     = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-				curl_close( $ch );
-
-				if ( ! empty( $fallback_html ) && $http_code < 400 ) {
-					return array(
-						'html'        => $fallback_html,
-						'headers'     => array(),
-						'status_code' => $http_code,
-						'error'       => null,
-					);
-				}
-			}
 
 			// If both network methods fail, provide a synthetic DOM based on WordPress defaults to avoid fatal failure
 			$synthetic_html = $this->generate_synthetic_dom();

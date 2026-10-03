@@ -6,11 +6,9 @@
  * Author:            MD. Ziaul Hasan
  * Author URI:        https://mdziaulhasan.com/
  * Text Domain:       seo-inspector-zhs
- * Domain Path:       /languages
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Requires at least: 5.8
- * Tested up to:      6.7
  * Requires PHP:      7.4
  *
  * @package           SEO_Inspector_ZHS

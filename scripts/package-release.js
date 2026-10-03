@@ -35,7 +35,7 @@ async function main() {
 	// 2. Stage production files
 	console.log('📦 Staging production files...');
 	const filesToCopy = ['seo-inspector-zhs.php', 'readme.txt', 'LICENSE'];
-	const dirsToCopy = ['includes', 'assets', 'templates'];
+	const dirsToCopy = ['includes', 'assets', 'templates', 'languages'];
 
 	for (const file of filesToCopy) {
 		const src = path.join(ROOT_DIR, file);

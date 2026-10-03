@@ -3,7 +3,7 @@ Contributors: zhsaikot
 Donate link: https://mdziaulhasan.com/
 Tags: seo, audit, accessibility, site-health, json-ld
 Requires at least: 5.8
-Tested up to: 6.7
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
@@ -89,8 +89,8 @@ No. All scanning, parsing, and scoring logic runs 100% locally on your WordPress
 
 == Screenshots ==
 
-1. screenshot-1.png: SaaS analytics dashboard displaying overall grade dial, KPI stat cards, and core pillar scores.
-2. screenshot-2.png: Dynamic 17-point diagnostic audit engine showing granular pass/warning results and contextual inline recommendations.
+1. SaaS analytics dashboard displaying overall grade dial, KPI stat cards, and core pillar scores.
+2. Dynamic 17-point diagnostic audit engine showing granular pass/warning results and contextual inline recommendations.
 
 == Changelog ==
 

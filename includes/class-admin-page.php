@@ -80,13 +80,6 @@ class SEO_Inspector_ZHS_Admin_Page {
 			SEO_INSPECTOR_ZHS_VERSION
 		);
 
-		// Google Fonts (Plus Jakarta Sans & JetBrains Mono for SaaS UI)
-		wp_enqueue_style(
-			'seo-inspector-zhs-fonts',
-			'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap',
-			array(),
-			null
-		);
 
 		// JavaScript logic
 		wp_enqueue_script(
