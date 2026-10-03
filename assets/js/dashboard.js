@@ -62,6 +62,9 @@
 			banner: document.getElementById('si-notification-banner'),
 			bannerMsg: document.getElementById('si-notification-msg'),
 			lastAuditTime: document.getElementById('si-last-audit-time'),
+			pageSelector: document.getElementById('si-page-selector'),
+			currentPageName: document.getElementById('si-current-page-name'),
+			currentPageUrl: document.getElementById('si-current-page-url'),
 
 			// KPIs
 			scoreDialProgress: document.getElementById('si-dial-progress'),
@@ -90,11 +93,19 @@
 	 * Bind event listeners.
 	 */
 	function bindEvents() {
+		// Page Selector dropdown
+		if (elements.pageSelector) {
+			elements.pageSelector.addEventListener('change', function () {
+				triggerLiveAudit(elements.pageSelector.value);
+			});
+		}
+
 		// Recheck Audit Button
 		if (elements.btnRecheck) {
 			elements.btnRecheck.addEventListener('click', function (e) {
 				e.preventDefault();
-				triggerLiveAudit();
+				const target = elements.pageSelector ? elements.pageSelector.value : '';
+				triggerLiveAudit(target);
 			});
 		}
 
@@ -197,9 +208,20 @@
 	/**
 	 * Trigger live audit via WP REST API.
 	 */
-	function triggerLiveAudit() {
+	function triggerLiveAudit(targetUrl) {
 		if (state.isAuditing) return;
 		state.isAuditing = true;
+
+		// Resolve target URL if not provided
+		if (!targetUrl) {
+			if (elements.pageSelector && elements.pageSelector.value) {
+				targetUrl = elements.pageSelector.value;
+			} else if (config.targetUrl) {
+				targetUrl = config.targetUrl;
+			} else {
+				targetUrl = config.siteUrl || '';
+			}
+		}
 
 		// UI Loading State
 		setLoadingState(true);
@@ -211,6 +233,9 @@
 				'X-WP-Nonce': config.nonce,
 				'Content-Type': 'application/json',
 			},
+			body: JSON.stringify({
+				url: targetUrl || '',
+			}),
 		})
 			.then(function (response) {
 				if (!response.ok) {
@@ -270,6 +295,18 @@
 			elements.lastAuditTime.textContent = data.formatted_date;
 		}
 
+		// 1b. Audited Page Metadata & Selector Sync
+		if (elements.currentPageName && data.page_name) {
+			elements.currentPageName.textContent = data.page_name;
+		}
+		if (elements.currentPageUrl && data.page_url) {
+			elements.currentPageUrl.textContent = data.page_url;
+			elements.currentPageUrl.setAttribute('href', data.page_url);
+		}
+		if (elements.pageSelector && data.page_url) {
+			elements.pageSelector.value = data.page_url;
+		}
+
 		// 2. Score Dial Animation
 		const score = parseInt(data.score, 10) || 0;
 		renderScoreDial(score, animate);
@@ -295,7 +332,7 @@
 
 		// 6. Update Checks List
 		if (data.checks && Array.isArray(data.checks)) {
-			renderChecksList(data.checks);
+			renderChecksList(data.checks, data.page_name, data.page_url);
 		}
 
 		// Re-apply any active filters
@@ -394,7 +431,7 @@
 	/**
 	 * Re-render Checks List items dynamically.
 	 */
-	function renderChecksList(checks) {
+	function renderChecksList(checks, defaultPageName, defaultPageUrl) {
 		if (!elements.checksList) return;
 
 		let html = '';
@@ -406,23 +443,25 @@
 			const impact = c.impact || 'medium';
 			const title = escapeHtml(c.title || '');
 			const summary = escapeHtml(c.summary || '');
-			const details = escapeHtml(c.details || '');
-			const rec = escapeHtml(c.recommendation || '');
+			const details = nl2br(c.details || '');
+			const rec = nl2br(c.recommendation || '');
+			const pageName = escapeHtml(c.page_name || defaultPageName || config.currentPageName || 'Front Page');
+			const pageUrl = escapeHtml(c.page_url || defaultPageUrl || config.targetUrl || config.siteUrl || '');
 
 			let badgeIcon = '';
 			if (status === 'pass') {
-				badgeIcon = '<span class="si-status-badge pass" title="Passed"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>';
+				badgeIcon = '<span class="si-status-badge pass" title="Passed Check (Score 1.0)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>';
 			} else if (status === 'partial') {
-				badgeIcon = '<span class="si-status-badge partial" title="Warning"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>';
+				badgeIcon = '<span class="si-status-badge partial" title="Partial Warning (Score 0.5)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>';
 			} else {
-				badgeIcon = '<span class="si-status-badge fail" title="Failed"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></span>';
+				badgeIcon = '<span class="si-status-badge fail" title="Failed Check (Score 0.0)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></span>';
 			}
 
 			html += `
 				<div class="si-check-card status-${status}"
 					 data-category="${cat}"
 					 data-status="${status}"
-					 data-search="${(title + ' ' + summary + ' ' + catLabel).toLowerCase()}">
+					 data-search="${(title + ' ' + summary + ' ' + catLabel + ' ' + pageName).toLowerCase()}">
 					<div class="si-check-header" tabindex="0" role="button" aria-expanded="false">
 						<div class="si-check-status-col">${badgeIcon}</div>
 						<div class="si-check-info-col">
@@ -440,20 +479,32 @@
 						</div>
 					</div>
 					<div class="si-check-body" style="display: none;">
+						<div class="si-page-location-chip">
+							<span class="si-page-label">
+								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+								<strong>Page:</strong>
+								<span class="si-chip-page-name">${pageName}</span>
+							</span>
+							<span class="si-page-sep">&bull;</span>
+							<a href="${pageUrl}" target="_blank" rel="noopener noreferrer" class="si-page-url-link" title="Open audited page in a new browser tab">
+								<span>${pageUrl}</span>
+								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+							</a>
+						</div>
 						<div class="si-check-detail-grid">
 							<div class="si-detail-block findings-block">
 								<div class="si-detail-heading">
 									<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-									Detected Findings &amp; DOM Evidence
+									Detected Findings &amp; Evidence
 								</div>
-								<div class="si-detail-content"><p>${details}</p></div>
+								<div class="si-detail-content"><p class="si-findings-text">${details}</p></div>
 							</div>
 							<div class="si-detail-block rec-block">
 								<div class="si-detail-heading">
 									<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
 									Actionable Recommendation
 								</div>
-								<div class="si-detail-content"><p>${rec}</p></div>
+								<div class="si-detail-content"><p class="si-rec-text">${rec}</p></div>
 							</div>
 						</div>
 					</div>
@@ -608,9 +659,20 @@
 	 * Escape HTML entities.
 	 */
 	function escapeHtml(str) {
+		if (typeof str !== 'string') {
+			str = String(str || '');
+		}
 		const div = document.createElement('div');
 		div.textContent = str;
 		return div.innerHTML;
+	}
+
+	/**
+	 * Convert newlines to HTML <br> tags safely.
+	 */
+	function nl2br(str) {
+		if (!str) return '';
+		return escapeHtml(str).replace(/(?:\r\n|\r|\n)/g, '<br>');
 	}
 
 	// Initialize on DOM Ready

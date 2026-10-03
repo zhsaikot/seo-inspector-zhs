@@ -114,7 +114,13 @@ class SEO_Inspector_ZHS_Rest_API {
 	 * @return WP_REST_Response
 	 */
 	public function get_audit( $request ) {
-		$audit = $this->engine->run_audit( false );
+		$target_url = '';
+		$url_param  = $request->get_param( 'url' );
+		if ( ! empty( $url_param ) ) {
+			$target_url = esc_url_raw( $url_param );
+		}
+
+		$audit = $this->engine->run_audit( false, $target_url );
 		return new WP_REST_Response(
 			array(
 				'success' => true,
@@ -132,7 +138,15 @@ class SEO_Inspector_ZHS_Rest_API {
 	 * @return WP_REST_Response
 	 */
 	public function run_audit( $request ) {
-		$audit = $this->engine->run_audit( true );
+		$target_url = '';
+		$json_params = $request->get_json_params();
+		if ( ! empty( $json_params['url'] ) ) {
+			$target_url = esc_url_raw( $json_params['url'] );
+		} elseif ( ! empty( $request->get_param( 'url' ) ) ) {
+			$target_url = esc_url_raw( $request->get_param( 'url' ) );
+		}
+
+		$audit = $this->engine->run_audit( true, $target_url );
 		return new WP_REST_Response(
 			array(
 				'success' => true,

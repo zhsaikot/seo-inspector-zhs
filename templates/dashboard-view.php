@@ -15,17 +15,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Retrieve initial pre-calculated data
-$initial_audit = $this->engine->run_audit( false );
-$overall_score = $initial_audit['score'] ?? 0;
-$grade         = $initial_audit['grade'] ?? 'N/A';
-$grade_label   = $initial_audit['grade_label'] ?? '';
-$passed_count  = $initial_audit['passed_count'] ?? 0;
-$partial_count = $initial_audit['partial_count'] ?? 0;
-$failed_count  = $initial_audit['failed_count'] ?? 0;
-$categories    = $initial_audit['category_scores'] ?? array();
-$checks        = $initial_audit['checks'] ?? array();
-$site_url      = $initial_audit['site_url'] ?? home_url( '/' );
-$last_audit    = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit['formatted_date'] : current_time( 'mysql' );
+$initial_audit   = $this->engine->run_audit( false );
+$overall_score   = $initial_audit['score'] ?? 0;
+$grade           = $initial_audit['grade'] ?? 'N/A';
+$grade_label     = $initial_audit['grade_label'] ?? '';
+$passed_count    = $initial_audit['passed_count'] ?? 0;
+$partial_count   = $initial_audit['partial_count'] ?? 0;
+$failed_count    = $initial_audit['failed_count'] ?? 0;
+$categories      = $initial_audit['category_scores'] ?? array();
+$checks          = $initial_audit['checks'] ?? array();
+$site_url        = $initial_audit['site_url'] ?? home_url( '/' );
+$page_name       = $initial_audit['page_name'] ?? __( 'Front Page (Homepage)', 'seo-inspector-zhs' );
+$page_url        = $initial_audit['page_url'] ?? $site_url;
+$scannable_pages = $initial_audit['scannable_pages'] ?? $this->engine->get_scannable_pages();
+$last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit['formatted_date'] : current_time( 'mysql' );
 ?>
 
 <div id="seo-inspector-app" class="si-dashboard-wrap">
@@ -55,9 +58,14 @@ $last_audit    = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit['f
 					<span class="si-badge-version">v1.0.0</span>
 				</div>
 				<div class="si-brand-meta">
+					<span class="si-audited-page-chip">
+						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+						<strong id="si-current-page-name"><?php echo esc_html( $page_name ); ?></strong>
+					</span>
+					<span class="si-meta-divider">&bull;</span>
 					<span class="si-site-url">
 						<span class="si-status-dot online"></span>
-						<a href="<?php echo esc_url( $site_url ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $site_url ); ?></a>
+						<a id="si-current-page-url" href="<?php echo esc_url( $page_url ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $page_url ); ?></a>
 					</span>
 					<span class="si-meta-divider">&bull;</span>
 					<span class="si-last-scan">
@@ -69,6 +77,24 @@ $last_audit    = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit['f
 		</div>
 
 		<div class="si-topbar-actions">
+			<!-- Page Selector Dropdown -->
+			<div class="si-page-select-wrap">
+				<label for="si-page-selector" class="screen-reader-text"><?php esc_html_e( 'Select Page to Audit', 'seo-inspector-zhs' ); ?></label>
+				<div class="si-select-inner">
+					<svg class="si-select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+					<select id="si-page-selector" class="si-page-selector" title="<?php esc_attr_e( 'Select target page to audit', 'seo-inspector-zhs' ); ?>">
+						<?php if ( ! empty( $scannable_pages ) ) : ?>
+							<?php foreach ( $scannable_pages as $sp ) : ?>
+								<option value="<?php echo esc_url( $sp['url'] ); ?>" data-name="<?php echo esc_attr( $sp['title'] ); ?>" <?php selected( $page_url, $sp['url'] ); ?>>
+									<?php echo esc_html( $sp['title'] ); ?>
+								</option>
+							<?php endforeach; ?>
+						<?php else : ?>
+							<option value="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Front Page (Homepage)', 'seo-inspector-zhs' ); ?></option>
+						<?php endif; ?>
+					</select>
+				</div>
+			</div>
 			<!-- Re-check Audit Button -->
 			<button id="si-btn-recheck" class="si-btn si-btn-primary" type="button" title="<?php esc_attr_e( 'Trigger a fresh live scan of front-end DOM and database', 'seo-inspector-zhs' ); ?>">
 				<svg class="si-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -307,11 +333,13 @@ $last_audit    = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit['f
 					$summary     = $check['summary'] ?? '';
 					$details     = $check['details'] ?? '';
 					$rec         = $check['recommendation'] ?? '';
+					$check_page  = $check['page_name'] ?? $page_name;
+					$check_url   = $check['page_url'] ?? $page_url;
 				?>
 					<div class="si-check-card status-<?php echo esc_attr( $status ); ?>"
 						 data-category="<?php echo esc_attr( $cat ); ?>"
 						 data-status="<?php echo esc_attr( $status ); ?>"
-						 data-search="<?php echo esc_attr( strtolower( $title . ' ' . $summary . ' ' . $cat_label ) ); ?>">
+						 data-search="<?php echo esc_attr( strtolower( $title . ' ' . $summary . ' ' . $cat_label . ' ' . $check_page ) ); ?>">
 
 						<div class="si-check-header" tabindex="0" role="button" aria-expanded="false">
 							<div class="si-check-status-col">
@@ -347,15 +375,29 @@ $last_audit    = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit['f
 						</div>
 
 						<div class="si-check-body" style="display: none;">
+							<!-- Page Location Chip -->
+							<div class="si-page-location-chip">
+								<span class="si-page-label">
+									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+									<strong><?php esc_html_e( 'Page:', 'seo-inspector-zhs' ); ?></strong>
+									<span class="si-chip-page-name"><?php echo esc_html( $check_page ); ?></span>
+								</span>
+								<span class="si-page-sep">&bull;</span>
+								<a href="<?php echo esc_url( $check_url ); ?>" target="_blank" rel="noopener noreferrer" class="si-page-url-link" title="<?php esc_attr_e( 'Open audited page in a new browser tab', 'seo-inspector-zhs' ); ?>">
+									<span><?php echo esc_html( $check_url ); ?></span>
+									<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+								</a>
+							</div>
+
 							<div class="si-check-detail-grid">
 								<!-- Detected Findings -->
 								<div class="si-detail-block findings-block">
 									<div class="si-detail-heading">
 										<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-										<?php esc_html_e( 'Detected Findings &amp; DOM Evidence', 'seo-inspector-zhs' ); ?>
+										<?php esc_html_e( 'Detected Findings &amp; Evidence', 'seo-inspector-zhs' ); ?>
 									</div>
 									<div class="si-detail-content">
-										<p><?php echo esc_html( $details ); ?></p>
+										<p class="si-findings-text"><?php echo nl2br( esc_html( $details ) ); ?></p>
 									</div>
 								</div>
 
@@ -366,7 +408,7 @@ $last_audit    = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit['f
 										<?php esc_html_e( 'Actionable Recommendation', 'seo-inspector-zhs' ); ?>
 									</div>
 									<div class="si-detail-content">
-										<p><?php echo esc_html( $rec ); ?></p>
+										<p class="si-rec-text"><?php echo nl2br( esc_html( $rec ) ); ?></p>
 									</div>
 								</div>
 							</div>

@@ -101,9 +101,12 @@ class SEO_Inspector_ZHS_Admin_Page {
 				'nonce'       => wp_create_nonce( 'wp_rest' ),
 				'siteUrl'     => home_url( '/' ),
 				'authorName'  => 'MD. Ziaul Hasan',
-				'authorUri'   => 'https://mdziaulhasan.com/',
-				'initialData' => $initial_audit,
-				'i18n'        => array(
+				'authorUri'       => 'https://mdziaulhasan.com/',
+				'initialData'     => $initial_audit,
+				'scannablePages'  => $this->engine->get_scannable_pages(),
+				'targetUrl'       => $initial_audit['page_url'] ?? home_url( '/' ),
+				'currentPageName' => $initial_audit['page_name'] ?? __( 'Front Page (Homepage)', 'seo-inspector-zhs' ),
+				'i18n'            => array(
 					'runningAudit'    => __( 'Running live audit & inspecting DOM...', 'seo-inspector-zhs' ),
 					'auditComplete'   => __( 'SEO Audit completed successfully!', 'seo-inspector-zhs' ),
 					'auditError'      => __( 'Audit encountered a network error. Please try again.', 'seo-inspector-zhs' ),
