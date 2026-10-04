@@ -131,6 +131,7 @@ All endpoints are registered under the `zhs-audit/v1` namespace and require `man
 
 - **Plugin Name**: ZHS Site Audit and SEO Diagnostics
 - **Plugin Slug**: `zhs-site-audit-seo-diagnostics`
+- **Plugin URI**: [https://mdziaulhasan.com/zhs-site-audit-plugin](https://mdziaulhasan.com/zhs-site-audit-plugin)
 - **Author**: MD. Ziaul Hasan (zhsaikot)
 - **Author URI**: [https://mdziaulhasan.com/](https://mdziaulhasan.com/)
 - **Text Domain**: `zhs-site-audit-seo-diagnostics`

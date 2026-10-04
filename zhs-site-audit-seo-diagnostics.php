@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       ZHS Site Audit and SEO Diagnostics
- * Plugin URI:        https://mdziaulhasan.com/
+ * Plugin URI:        https://mdziaulhasan.com/zhs-site-audit-plugin
  * Description:       Comprehensive 17-point site audit and SEO diagnostics suite verifying usability, accessibility, indexing, schema, and GEO/AI readiness.
  * Version:           1.0.0
  * Author:            MD. Ziaul Hasan (zhsaikot)
