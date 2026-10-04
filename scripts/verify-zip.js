@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Read ZIP central directory records
-const zipBuffer = fs.readFileSync(path.join(__dirname, '../dist/seo-inspector-zhs.zip'));
+const zipBuffer = fs.readFileSync(path.join(__dirname, '../dist/zhs-site-audit-seo-diagnostics.zip'));
 
 console.log('--- Inspecting ZIP File Entries ---');
 let offset = 0;

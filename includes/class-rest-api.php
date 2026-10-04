@@ -1,11 +1,11 @@
 <?php
 /**
- * SEO Inspector ZHS - REST API Endpoints
+ * ZHS Site Audit and SEO Diagnostics - REST API Endpoints
  *
  * Exposes REST API routes for executing audits and retrieving results asynchronously.
  *
- * @package    SEO_Inspector_ZHS
- * @subpackage SEO_Inspector_ZHS/includes
+ * @package    ZHS_Site_Audit_SEO_Diagnostics
+ * @subpackage ZHS_Site_Audit_SEO_Diagnostics/includes
  * @author     MD. Ziaul Hasan <https://mdziaulhasan.com/>
  * @license    GPL-2.0-or-later
  */
@@ -14,26 +14,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class SEO_Inspector_ZHS_Rest_API {
+class ZHS_Audit_Rest_API {
 
 	/**
 	 * REST route namespace.
 	 */
-	const REST_NAMESPACE = 'seo-inspector/v1';
+	const REST_NAMESPACE = 'zhs-audit/v1';
 
 	/**
 	 * Audit engine instance.
 	 *
-	 * @var SEO_Inspector_ZHS_Audit_Engine
+	 * @var ZHS_Audit_Engine
 	 */
 	private $engine;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param SEO_Inspector_ZHS_Audit_Engine $engine
+	 * @param ZHS_Audit_Engine $engine
 	 */
-	public function __construct( SEO_Inspector_ZHS_Audit_Engine $engine ) {
+	public function __construct( ZHS_Audit_Engine $engine ) {
 		$this->engine = $engine;
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
@@ -86,8 +86,8 @@ class SEO_Inspector_ZHS_Rest_API {
 	public function check_permissions( $request ) {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
-				'seo_inspector_zhs_forbidden',
-				__( 'You do not have permission to access SEO Inspector audit diagnostics.', 'seo-inspector-zhs' ),
+				'zhs_audit_forbidden',
+				__( 'You do not have permission to access SEO Inspector audit diagnostics.', 'zhs-site-audit-seo-diagnostics' ),
 				array( 'status' => rest_authorization_required_code() )
 			);
 		}
@@ -97,8 +97,8 @@ class SEO_Inspector_ZHS_Rest_API {
 			$nonce = $request->get_header( 'x_wp_nonce' );
 			if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
 				return new WP_Error(
-					'seo_inspector_zhs_invalid_nonce',
-					__( 'Invalid or missing CSRF token (X-WP-Nonce).', 'seo-inspector-zhs' ),
+					'zhs_audit_invalid_nonce',
+					__( 'Invalid or missing CSRF token (X-WP-Nonce).', 'zhs-site-audit-seo-diagnostics' ),
 					array( 'status' => 403 )
 				);
 			}
@@ -137,7 +137,7 @@ class SEO_Inspector_ZHS_Rest_API {
 			array(
 				'success' => true,
 				'data'    => $audit,
-				'message' => __( 'Audit data retrieved successfully.', 'seo-inspector-zhs' ),
+				'message' => __( 'Audit data retrieved successfully.', 'zhs-site-audit-seo-diagnostics' ),
 			),
 			200
 		);
@@ -188,7 +188,7 @@ class SEO_Inspector_ZHS_Rest_API {
 			array(
 				'success' => true,
 				'data'    => $audit,
-				'message' => __( 'Live audit completed successfully.', 'seo-inspector-zhs' ),
+				'message' => __( 'Live audit completed successfully.', 'zhs-site-audit-seo-diagnostics' ),
 			),
 			200
 		);
@@ -201,11 +201,11 @@ class SEO_Inspector_ZHS_Rest_API {
 	 * @return WP_REST_Response
 	 */
 	public function clear_cache( $request ) {
-		delete_option( SEO_Inspector_ZHS_Audit_Engine::OPTION_CACHE_KEY );
+		delete_option( ZHS_Audit_Engine::OPTION_CACHE_KEY );
 		return new WP_REST_Response(
 			array(
 				'success' => true,
-				'message' => __( 'Audit cache cleared successfully.', 'seo-inspector-zhs' ),
+				'message' => __( 'Audit cache cleared successfully.', 'zhs-site-audit-seo-diagnostics' ),
 			),
 			200
 		);

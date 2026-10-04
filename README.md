@@ -1,11 +1,11 @@
-# SEO Inspector
+# ZHS Site Audit and SEO Diagnostics
 
 [![WordPress Tested](https://img.shields.io/badge/WordPress-5.8%2B-blue.svg)](https://wordpress.org)
 [![PHP Tested](https://img.shields.io/badge/PHP-7.4%20--%208.3-777bb4.svg)](https://php.net)
 [![License: GPL v2+](https://img.shields.io/badge/License-GPLv2%2B-green.svg)](http://www.gnu.org/licenses/gpl-2.0.txt)
 [![Developer](https://img.shields.io/badge/Author-MD.%20Ziaul%20Hasan-0284c7.svg)](https://mdziaulhasan.com/)
 
-A production-ready, modular WordPress SEO Audit & Analytics Dashboard plugin engineered with a clean SaaS aesthetic, live DOM/database diagnostics, real-time re-checks via WordPress REST API, and client-ready export reports.
+A production-grade, modular WordPress SEO Audit & Analytics Dashboard plugin engineered with a clean SaaS aesthetic, live DOM/database diagnostics, real-time re-checks via WordPress REST API, and client-ready export reports.
 
 ---
 
@@ -14,12 +14,13 @@ A production-ready, modular WordPress SEO Audit & Analytics Dashboard plugin eng
 - **Direct ZIP Upload Ready**: Zip the plugin folder directly, upload and activate straight in WordPress without manual directory shifting.
 - **Modern SaaS UI**: Styled with clean white cards, soft 12px+ rounded corners, subtle drop shadows, fluid typography, and animated SVG progress dials.
 - **Dynamic 17-Point Audit Engine**: Analyzes your live front-end DOM, HTTP response headers, meta tags, and WordPress database records.
+- **Multi-Page & Full Website Auditing**: Select specific pages or scan your entire site at once with granular per-page issue diagnosis.
 - **Four Core Audit Pillars**:
   1. **Usability Diagnostics** (SSL/HTTPS, Mobile Viewport, Multi-channel contact links, Popups, and Footer trust links).
   2. **Accessibility Compliance** (WCAG skip-to-content links, Image alt tags, Form label pairings, and Heading hierarchy).
   3. **SEO Essentials** (SERP Title tag lengths, Meta description optimization, Canonical & Robots directives, Open Graph / Twitter cards, XML Sitemaps, and Indexable content depth).
   4. **GEO & AI-Readiness** (Schema.org JSON-LD graph analysis, `sameAs` entity reconciliation, and cross-channel brand disambiguation).
-- **Asynchronous Live Re-Checks**: Trigger fresh scans with live visual loaders via the WordPress REST API (`/wp-json/seo-inspector/v1/audit/run`).
+- **Asynchronous Live Re-Checks**: Trigger fresh scans with live visual loaders via the WordPress REST API (`/wp-json/zhs-audit/v1/audit/run`).
 - **Interactive Filtering & Search**: Instant real-time filtering by status (Passed, Warnings, Critical), category tabs, and keyword search.
 - **Client Presentation Ready**: 1-click **Export Report** with print-optimized CSS for executive PDF generation, plus structured **JSON Export**.
 
@@ -28,20 +29,24 @@ A production-ready, modular WordPress SEO Audit & Analytics Dashboard plugin eng
 ## 📁 Plugin Folder & Upload Structure
 
 ```text
-seo-inspector-zhs/
-├── seo-inspector-zhs.php       # Main plugin bootstrap file with headers
-├── README.md                   # Complete documentation
+zhs-site-audit-seo-diagnostics/
+├── zhs-site-audit-seo-diagnostics.php # Main plugin bootstrap file with headers
+├── README.md                          # Complete documentation
+├── readme.txt                         # WordPress.org standard readme
+├── LICENSE                            # GPLv2 license
 ├── includes/
-│   ├── class-audit-engine.php  # Audit scanner, 17 checks & scoring logic
-│   ├── class-admin-page.php    # Admin menu, settings & dashboard view loader
-│   └── class-rest-api.php      # REST endpoints for live re-checking/fetching
+│   ├── class-audit-engine.php         # Audit scanner, 17 checks & scoring logic
+│   ├── class-admin-page.php           # Admin menu, settings & dashboard view loader
+│   └── class-rest-api.php             # REST endpoints for live re-checking/fetching
 ├── assets/
 │   ├── css/
-│   │   └── dashboard.css       # Modern SaaS UI styling & print stylesheet
+│   │   └── dashboard.css              # Modern SaaS UI styling & print stylesheet
 │   └── js/
-│       └── dashboard.js        # REST triggers, chart rendering & re-check actions
+│       └── dashboard.js               # REST triggers, chart rendering & re-check actions
+├── languages/
+│   └── zhs-site-audit-seo-diagnostics.pot # Translation template catalog
 └── templates/
-    └── dashboard-view.php      # Main dashboard HTML structure
+    └── dashboard-view.php             # Main dashboard HTML structure
 ```
 
 ---
@@ -49,16 +54,15 @@ seo-inspector-zhs/
 ## 🚀 Installation & Quick Start
 
 ### Option A: Upload ZIP via WordPress Admin (Recommended)
-1. Compress the `seo-inspector-zhs` directory into a `.zip` archive.
-2. In WordPress Admin, navigate to **Plugins > Add New > Upload Plugin**.
-3. Select the `seo-inspector-zhs.zip` file and click **Install Now**.
-4. Click **Activate Plugin**.
-5. Access the dashboard from the left admin menu: **SEO Inspector**.
+1. In WordPress Admin, navigate to **Plugins > Add New > Upload Plugin**.
+2. Select the `zhs-site-audit-seo-diagnostics.zip` file and click **Install Now**.
+3. Click **Activate Plugin**.
+4. Access the dashboard from the left admin menu: **Site Audit**.
 
 ### Option B: Direct Directory Deployment
-1. Copy the `seo-inspector-zhs` folder directly into your site's `wp-content/plugins/` directory.
+1. Copy the `zhs-site-audit-seo-diagnostics` folder directly into your site's `wp-content/plugins/` directory.
 2. Navigate to **Plugins > Installed Plugins** in WordPress Admin.
-3. Locate **SEO Inspector** and click **Activate**.
+3. Locate **ZHS Site Audit and SEO Diagnostics** and click **Activate**.
 
 ---
 
@@ -88,7 +92,7 @@ The audit engine (`includes/class-audit-engine.php`) inspects your site dynamica
 15. **Indexable Content Depth**: Queries published post/page volume in the database and analyzes front-page text density to avoid thin-content penalties.
 
 ### 4. GEO & AI-Readiness (Search 2.0 / Knowledge Graphs)
-16. **Schema.org JSON-LD Structured Data**: Deep-scans `<script type="application/ld+json">` graphs for `Organization`, `LocalBusiness`, `RealEstateAgent`, physical addresses, and `sameAs` entity reconciliation profiles.
+16. **Schema.org JSON-LD Structured Data**: Deep-scans `<script type="application/ld+json">` graphs for `Organization`, `LocalBusiness`, physical addresses, and `sameAs` entity reconciliation profiles.
 17. **AI & Entity Brand Readiness**: Verifies uniform brand consistency across site titles, Open Graph tags, Schema entities, and copyright statements so LLM search engines (ChatGPT, Gemini, Perplexity) disambiguate your brand.
 
 ---
@@ -113,22 +117,23 @@ $$\text{Overall Score} = \left(\frac{\sum \text{Check Scores}}{17}\right) \times
 
 ## 🔌 REST API Endpoints
 
-All endpoints are registered under the `seo-inspector/v1` namespace and require `manage_options` permissions:
+All endpoints are registered under the `zhs-audit/v1` namespace and require `manage_options` permissions:
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| `GET` | `/wp-json/seo-inspector/v1/audit` | Retrieves cached audit results (or initial scan). |
-| `POST` | `/wp-json/seo-inspector/v1/audit/run` | Triggers a fresh live audit scan and updates cache. |
-| `POST` | `/wp-json/seo-inspector/v1/audit/clear` | Clears stored audit transient/options cache. |
+| `GET` | `/wp-json/zhs-audit/v1/audit` | Retrieves cached audit results (or initial scan). |
+| `POST` | `/wp-json/zhs-audit/v1/audit/run` | Triggers a fresh live audit scan and updates cache. |
+| `POST` | `/wp-json/zhs-audit/v1/audit/clear` | Clears stored audit transient/options cache. |
 
 ---
 
 ## 👨‍💻 Developer & Attribution
 
-- **Plugin Name**: SEO Inspector
-- **Author**: MD. Ziaul Hasan
+- **Plugin Name**: ZHS Site Audit and SEO Diagnostics
+- **Plugin Slug**: `zhs-site-audit-seo-diagnostics`
+- **Author**: MD. Ziaul Hasan (zhsaikot)
 - **Author URI**: [https://mdziaulhasan.com/](https://mdziaulhasan.com/)
-- **Text Domain**: `seo-inspector-zhs`
+- **Text Domain**: `zhs-site-audit-seo-diagnostics`
 
 ---
 

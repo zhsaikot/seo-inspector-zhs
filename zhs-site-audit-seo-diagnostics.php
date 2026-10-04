@@ -1,18 +1,20 @@
 <?php
 /**
- * Plugin Name:       SEO Inspector
- * Description:       Production-ready, modular WordPress SEO audit and analytics engine with live front-end DOM diagnostics, usability, accessibility, SEO, and GEO/AI readiness verification.
- * Version:           1.1.0
- * Author:            MD. Ziaul Hasan
+ * Plugin Name:       ZHS Site Audit and SEO Diagnostics
+ * Plugin URI:        https://mdziaulhasan.com/
+ * Description:       Comprehensive 17-point site audit and SEO diagnostics suite verifying usability, accessibility, indexing, schema, and GEO/AI readiness.
+ * Version:           1.0.0
+ * Author:            MD. Ziaul Hasan (zhsaikot)
  * Author URI:        https://mdziaulhasan.com/
- * Text Domain:       seo-inspector-zhs
+ * Text Domain:       zhs-site-audit-seo-diagnostics
+ * Domain Path:       /languages
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Requires at least: 5.8
  * Requires PHP:      7.4
  *
- * @package           SEO_Inspector_ZHS
- * @author            MD. Ziaul Hasan
+ * @package           ZHS_Site_Audit_SEO_Diagnostics
+ * @author            MD. Ziaul Hasan (zhsaikot)
  * @copyright         Copyright (C) 2026 MD. Ziaul Hasan. All rights reserved.
  */
 
@@ -21,49 +23,49 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define core plugin constants
-define( 'SEO_INSPECTOR_ZHS_VERSION', '1.1.0' );
-define( 'SEO_INSPECTOR_ZHS_FILE', __FILE__ );
-define( 'SEO_INSPECTOR_ZHS_DIR', plugin_dir_path( __FILE__ ) );
-define( 'SEO_INSPECTOR_ZHS_URL', plugin_dir_url( __FILE__ ) );
-define( 'SEO_INSPECTOR_ZHS_BASENAME', plugin_basename( __FILE__ ) );
+define( 'ZHS_AUDIT_VERSION', '1.0.0' );
+define( 'ZHS_AUDIT_FILE', __FILE__ );
+define( 'ZHS_AUDIT_DIR', plugin_dir_path( __FILE__ ) );
+define( 'ZHS_AUDIT_URL', plugin_dir_url( __FILE__ ) );
+define( 'ZHS_AUDIT_BASENAME', plugin_basename( __FILE__ ) );
 
 /**
  * Main plugin singleton bootstrap class.
  */
-final class SEO_Inspector_ZHS {
+final class ZHS_Audit {
 
 	/**
 	 * Singleton instance.
 	 *
-	 * @var SEO_Inspector_ZHS|null
+	 * @var ZHS_Audit|null
 	 */
 	private static $instance = null;
 
 	/**
 	 * Audit engine instance.
 	 *
-	 * @var SEO_Inspector_ZHS_Audit_Engine
+	 * @var ZHS_Audit_Engine
 	 */
 	public $audit_engine;
 
 	/**
 	 * Admin page loader instance.
 	 *
-	 * @var SEO_Inspector_ZHS_Admin_Page
+	 * @var ZHS_Audit_Admin_Page
 	 */
 	public $admin_page;
 
 	/**
 	 * REST API controller instance.
 	 *
-	 * @var SEO_Inspector_ZHS_Rest_API
+	 * @var ZHS_Audit_Rest_API
 	 */
 	public $rest_api;
 
 	/**
 	 * Retrieve singleton instance.
 	 *
-	 * @return SEO_Inspector_ZHS
+	 * @return ZHS_Audit
 	 */
 	public static function get_instance() {
 		if ( null === self::$instance ) {
@@ -85,18 +87,18 @@ final class SEO_Inspector_ZHS {
 	 * Load class files.
 	 */
 	private function load_dependencies() {
-		require_once SEO_INSPECTOR_ZHS_DIR . 'includes/class-audit-engine.php';
-		require_once SEO_INSPECTOR_ZHS_DIR . 'includes/class-admin-page.php';
-		require_once SEO_INSPECTOR_ZHS_DIR . 'includes/class-rest-api.php';
+		require_once ZHS_AUDIT_DIR . 'includes/class-audit-engine.php';
+		require_once ZHS_AUDIT_DIR . 'includes/class-admin-page.php';
+		require_once ZHS_AUDIT_DIR . 'includes/class-rest-api.php';
 	}
 
 	/**
 	 * Initialize components.
 	 */
 	private function init_components() {
-		$this->audit_engine = new SEO_Inspector_ZHS_Audit_Engine();
-		$this->admin_page   = new SEO_Inspector_ZHS_Admin_Page( $this->audit_engine );
-		$this->rest_api     = new SEO_Inspector_ZHS_Rest_API( $this->audit_engine );
+		$this->audit_engine = new ZHS_Audit_Engine();
+		$this->admin_page   = new ZHS_Audit_Admin_Page( $this->audit_engine );
+		$this->rest_api     = new ZHS_Audit_Rest_API( $this->audit_engine );
 	}
 
 	/**
@@ -104,10 +106,10 @@ final class SEO_Inspector_ZHS {
 	 */
 	private function register_hooks() {
 		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
-		add_filter( 'plugin_action_links_' . SEO_INSPECTOR_ZHS_BASENAME, array( $this, 'add_action_links' ) );
+		add_filter( 'plugin_action_links_' . ZHS_AUDIT_BASENAME, array( $this, 'add_action_links' ) );
 
-		register_activation_hook( SEO_INSPECTOR_ZHS_FILE, array( $this, 'activate' ) );
-		register_deactivation_hook( SEO_INSPECTOR_ZHS_FILE, array( $this, 'deactivate' ) );
+		register_activation_hook( ZHS_AUDIT_FILE, array( $this, 'activate' ) );
+		register_deactivation_hook( ZHS_AUDIT_FILE, array( $this, 'deactivate' ) );
 	}
 
 	/**
@@ -115,9 +117,9 @@ final class SEO_Inspector_ZHS {
 	 */
 	public function load_textdomain() {
 		load_plugin_textdomain(
-			'seo-inspector-zhs',
+			'zhs-site-audit-seo-diagnostics',
 			false,
-			dirname( SEO_INSPECTOR_ZHS_BASENAME ) . '/languages'
+			dirname( ZHS_AUDIT_BASENAME ) . '/languages'
 		);
 	}
 
@@ -130,8 +132,8 @@ final class SEO_Inspector_ZHS {
 	public function add_action_links( $links ) {
 		$dashboard_link = sprintf(
 			'<a href="%s" style="font-weight: 600; color: #0284c7;">%s</a>',
-			esc_url( admin_url( 'admin.php?page=seo-inspector-zhs' ) ),
-			esc_html__( 'Open Audit Dashboard', 'seo-inspector-zhs' )
+			esc_url( admin_url( 'admin.php?page=zhs-site-audit-seo-diagnostics' ) ),
+			esc_html__( 'Open Audit Dashboard', 'zhs-site-audit-seo-diagnostics' )
 		);
 
 		array_unshift( $links, $dashboard_link );
@@ -143,7 +145,7 @@ final class SEO_Inspector_ZHS {
 	 */
 	public function activate() {
 		// Run initial audit to prime transient cache if not already set
-		if ( ! get_option( SEO_Inspector_ZHS_Audit_Engine::OPTION_CACHE_KEY ) ) {
+		if ( ! get_option( ZHS_Audit_Engine::OPTION_CACHE_KEY ) ) {
 			$this->audit_engine->run_audit( true );
 		}
 	}
@@ -159,9 +161,9 @@ final class SEO_Inspector_ZHS {
 /**
  * Bootstrap the plugin.
  */
-function seo_inspector_zhs() {
-	return SEO_Inspector_ZHS::get_instance();
+function zhs_audit() {
+	return ZHS_Audit::get_instance();
 }
 
 // Fire up the plugin
-seo_inspector_zhs();
+zhs_audit();

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# SEO Inspector ZHS - Production Release Packaging Script
+# ZHS Site Audit and SEO Diagnostics - Production Release Packaging Script
 #
 # Generates a 100% WordPress-compliant ZIP archive with forward slashes (/)
-# preventing the "Could not copy file. seo-inspector-zhs\assets\" error.
+# preventing the "Could not copy file. zhs-site-audit-seo-diagnostics\assets\" error.
 # ==============================================================================
 
 set -e

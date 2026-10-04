@@ -1,9 +1,9 @@
 /**
- * SEO Inspector ZHS - Production Release Packaging Script
+ * ZHS Site Audit and SEO Diagnostics - Production Release Packaging Script
  *
  * Uses 'archiver' to generate a 100% WordPress-compliant ZIP archive
  * strictly enforcing forward slashes ('/') in all entry paths to prevent
- * the WordPress "Could not copy file. seo-inspector-zhs\assets\" error.
+ * the WordPress "Could not copy file. zhs-site-audit-seo-diagnostics\assets\" error.
  *
  * @author MD. Ziaul Hasan <https://mdziaulhasan.com/>
  */
@@ -13,17 +13,17 @@ const path = require('path');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DIST_DIR = path.join(ROOT_DIR, 'dist');
-const ZIP_FILE = path.join(DIST_DIR, 'seo-inspector-zhs.zip');
-const STAGE_DIR = path.join(DIST_DIR, 'seo-inspector-zhs');
+const ZIP_FILE = path.join(DIST_DIR, 'zhs-site-audit-seo-diagnostics.zip');
+const STAGE_DIR = path.join(DIST_DIR, 'zhs-site-audit-seo-diagnostics');
 
 // Targets to copy for user convenience
-const USER_DESKTOP = path.join(process.env.USERPROFILE || 'C:\\Users\\MD. Ziaul Hasan', 'Desktop', 'seo-inspector-zhs.zip');
-const USER_DOWNLOADS = path.join(process.env.USERPROFILE || 'C:\\Users\\MD. Ziaul Hasan', 'Downloads', 'seo-inspector-zhs.zip');
-const SCRATCH_ZIP = path.join(process.env.USERPROFILE || 'C:\\Users\\MD. Ziaul Hasan', '.gemini', 'antigravity', 'scratch', 'seo-inspector-zhs.zip');
+const USER_DESKTOP = path.join(process.env.USERPROFILE || 'C:\\Users\\MD. Ziaul Hasan', 'Desktop', 'zhs-site-audit-seo-diagnostics.zip');
+const USER_DOWNLOADS = path.join(process.env.USERPROFILE || 'C:\\Users\\MD. Ziaul Hasan', 'Downloads', 'zhs-site-audit-seo-diagnostics.zip');
+const SCRATCH_ZIP = path.join(process.env.USERPROFILE || 'C:\\Users\\MD. Ziaul Hasan', '.gemini', 'antigravity', 'scratch', 'zhs-site-audit-seo-diagnostics.zip');
 
 async function main() {
 	console.log('==========================================================');
-	console.log(' Packaging SEO Inspector for WordPress (Cross-Platform ZIP)');
+	console.log(' Packaging ZHS Site Audit and SEO Diagnostics for WordPress (Cross-Platform ZIP)');
 	console.log('==========================================================\n');
 
 	// 1. Clean and prepare dist directory
@@ -34,7 +34,7 @@ async function main() {
 
 	// 2. Stage production files
 	console.log('📦 Staging production files...');
-	const filesToCopy = ['seo-inspector-zhs.php', 'readme.txt', 'LICENSE'];
+	const filesToCopy = ['zhs-site-audit-seo-diagnostics.php', 'readme.txt', 'LICENSE'];
 	const dirsToCopy = ['includes', 'assets', 'templates', 'languages'];
 
 	for (const file of filesToCopy) {
@@ -56,11 +56,11 @@ async function main() {
 
 	// 3. Build ZIP Archive with explicit forward-slash paths
 	console.log('\n🗜️  Building WordPress-compliant ZIP archive with forward slashes...');
-	await createStandardZip(STAGE_DIR, ZIP_FILE, 'seo-inspector-zhs');
+	await createStandardZip(STAGE_DIR, ZIP_FILE, 'zhs-site-audit-seo-diagnostics');
 
 	const stats = fs.statSync(ZIP_FILE);
 	const sizeKb = (stats.size / 1024).toFixed(2);
-	console.log(`   ✅ Built release archive: dist/seo-inspector-zhs.zip (${sizeKb} KB)`);
+	console.log(`   ✅ Built release archive: dist/zhs-site-audit-seo-diagnostics.zip (${sizeKb} KB)`);
 
 	// 4. Distribute to Desktop, Downloads, and Scratch
 	console.log('\n🚀 Copying verified ZIP to convenient locations...');

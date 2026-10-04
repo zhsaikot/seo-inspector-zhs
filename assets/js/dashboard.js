@@ -1,11 +1,11 @@
 /**
- * SEO Inspector ZHS - Interactive Dashboard Controller
+ * ZHS Site Audit and SEO Diagnostics - Interactive Dashboard Controller
  *
  * Handles AJAX/REST live audits, filtering, search, animations,
  * accordion mechanics, print export, and JSON downloads.
  *
- * @package    SEO_Inspector_ZHS
- * @subpackage SEO_Inspector_ZHS/assets/js
+ * @package    ZHS_Site_Audit_SEO_Diagnostics
+ * @subpackage ZHS_Site_Audit_SEO_Diagnostics/assets/js
  * @author     MD. Ziaul Hasan <https://mdziaulhasan.com/>
  * @license    GPL-2.0+
  */
@@ -14,12 +14,12 @@
 	'use strict';
 
 	// Validate configuration injected via wp_localize_script
-	if (typeof window.seoInspectorConfig === 'undefined') {
+	if (typeof window.zhsAuditConfig === 'undefined' && typeof window.seoInspectorConfig === 'undefined') {
 		console.warn('SEO Inspector: Config object not detected.');
 		return;
 	}
 
-	const config = window.seoInspectorConfig;
+	const config = window.zhsAuditConfig || window.seoInspectorConfig;
 
 	// Component State
 	const state = {
@@ -875,7 +875,7 @@
 		const dateStamp = new Date().toISOString().slice(0, 10);
 
 		downloadAnchor.setAttribute('href', dataStr);
-		downloadAnchor.setAttribute('download', 'seo-inspector-audit-' + dateStamp + '.json');
+		downloadAnchor.setAttribute('download', 'zhs-site-audit-' + dateStamp + '.json');
 		document.body.appendChild(downloadAnchor);
 		downloadAnchor.click();
 		downloadAnchor.remove();

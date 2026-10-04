@@ -1,12 +1,12 @@
 <?php
 /**
- * SEO Inspector ZHS - Admin Page & Assets Loader
+ * ZHS Site Audit and SEO Diagnostics - Admin Page & Assets Loader
  *
  * Registers the administration menu, enqueues SaaS UI styles/scripts,
  * and renders the dashboard template.
  *
- * @package    SEO_Inspector_ZHS
- * @subpackage SEO_Inspector_ZHS/includes
+ * @package    ZHS_Site_Audit_SEO_Diagnostics
+ * @subpackage ZHS_Site_Audit_SEO_Diagnostics/includes
  * @author     MD. Ziaul Hasan <https://mdziaulhasan.com/>
  * @license    GPL-2.0-or-later
  */
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class SEO_Inspector_ZHS_Admin_Page {
+class ZHS_Audit_Admin_Page {
 
 	/**
 	 * Hook suffix for the admin menu page.
@@ -27,16 +27,16 @@ class SEO_Inspector_ZHS_Admin_Page {
 	/**
 	 * Audit engine instance.
 	 *
-	 * @var SEO_Inspector_ZHS_Audit_Engine
+	 * @var ZHS_Audit_Engine
 	 */
 	private $engine;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param SEO_Inspector_ZHS_Audit_Engine $engine
+	 * @param ZHS_Audit_Engine $engine
 	 */
-	public function __construct( SEO_Inspector_ZHS_Audit_Engine $engine ) {
+	public function __construct( ZHS_Audit_Engine $engine ) {
 		$this->engine = $engine;
 
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
@@ -52,10 +52,10 @@ class SEO_Inspector_ZHS_Admin_Page {
 		);
 
 		$this->page_hook = add_menu_page(
-			__( 'SEO Inspector & Site Audit', 'seo-inspector-zhs' ),
-			__( 'SEO Inspector', 'seo-inspector-zhs' ),
+			__( 'ZHS Site Audit and SEO Diagnostics', 'zhs-site-audit-seo-diagnostics' ),
+			__( 'Site Audit', 'zhs-site-audit-seo-diagnostics' ),
 			'manage_options',
-			'seo-inspector-zhs',
+			'zhs-site-audit-seo-diagnostics',
 			array( $this, 'render_dashboard' ),
 			$svg_icon,
 			75
@@ -74,19 +74,19 @@ class SEO_Inspector_ZHS_Admin_Page {
 
 		// CSS styles
 		wp_enqueue_style(
-			'seo-inspector-zhs-admin-css',
-			SEO_INSPECTOR_ZHS_URL . 'assets/css/dashboard.css',
+			'zhs-audit-admin-css',
+			ZHS_AUDIT_URL . 'assets/css/dashboard.css',
 			array(),
-			SEO_INSPECTOR_ZHS_VERSION
+			ZHS_AUDIT_VERSION
 		);
 
 
 		// JavaScript logic
 		wp_enqueue_script(
-			'seo-inspector-zhs-admin-js',
-			SEO_INSPECTOR_ZHS_URL . 'assets/js/dashboard.js',
+			'zhs-audit-admin-js',
+			ZHS_AUDIT_URL . 'assets/js/dashboard.js',
 			array(),
-			SEO_INSPECTOR_ZHS_VERSION,
+			ZHS_AUDIT_VERSION,
 			true
 		);
 
@@ -94,10 +94,10 @@ class SEO_Inspector_ZHS_Admin_Page {
 		$initial_audit = $this->engine->run_audit( false, home_url( '/' ), 'single' );
 
 		wp_localize_script(
-			'seo-inspector-zhs-admin-js',
-			'seoInspectorConfig',
+			'zhs-audit-admin-js',
+			'zhsAuditConfig',
 			array(
-				'restUrl'            => esc_url_raw( rest_url( 'seo-inspector/v1/' ) ),
+				'restUrl'            => esc_url_raw( rest_url( 'zhs-audit/v1/' ) ),
 				'nonce'              => wp_create_nonce( 'wp_rest' ),
 				'siteUrl'            => home_url( '/' ),
 				'authorName'         => 'MD. Ziaul Hasan',
@@ -105,28 +105,28 @@ class SEO_Inspector_ZHS_Admin_Page {
 				'initialData'        => $initial_audit,
 				'scannablePages'     => $this->engine->get_scannable_pages(),
 				'auditMode'          => 'single',
-				'scopeLabel'         => $initial_audit['page_name'] ?? __( 'Front Page (Homepage)', 'seo-inspector-zhs' ),
+				'scopeLabel'         => $initial_audit['page_name'] ?? __( 'Front Page (Homepage)', 'zhs-site-audit-seo-diagnostics' ),
 				'targetUrl'          => home_url( '/' ),
-				'currentPageName'    => $initial_audit['page_name'] ?? __( 'Front Page (Homepage)', 'seo-inspector-zhs' ),
+				'currentPageName'    => $initial_audit['page_name'] ?? __( 'Front Page (Homepage)', 'zhs-site-audit-seo-diagnostics' ),
 				'scannedUrls'        => array( home_url( '/' ) ),
 				'i18n'               => array(
-					'runningAudit'   => __( 'Running live audit & inspecting DOM...', 'seo-inspector-zhs' ),
-					'auditComplete'  => __( 'SEO Audit completed successfully!', 'seo-inspector-zhs' ),
-					'auditError'     => __( 'Audit encountered a network error. Please try again.', 'seo-inspector-zhs' ),
-					'recheckBtn'     => __( 'Re-check Audit', 'seo-inspector-zhs' ),
-					'rechecking'     => __( 'Auditing...', 'seo-inspector-zhs' ),
-					'exporting'      => __( 'Preparing print report...', 'seo-inspector-zhs' ),
-					'copySuccess'    => __( 'JSON report copied to clipboard!', 'seo-inspector-zhs' ),
-					'allChecks'      => __( 'All Checks', 'seo-inspector-zhs' ),
-					'pass'           => __( 'Pass', 'seo-inspector-zhs' ),
-					'partial'        => __( 'Warning', 'seo-inspector-zhs' ),
-					'fail'           => __( 'Fail', 'seo-inspector-zhs' ),
-					'fullWebsite'    => __( 'Full Website Audit', 'seo-inspector-zhs' ),
-					'selectAll'      => __( 'Select All', 'seo-inspector-zhs' ),
-					'clearAll'       => __( 'Clear All', 'seo-inspector-zhs' ),
-					'runAudit'       => __( 'Run Audit', 'seo-inspector-zhs' ),
-					'pagesSelected'  => __( '%d Pages Selected', 'seo-inspector-zhs' ),
-					'affectedPages'  => __( 'Affected Pages', 'seo-inspector-zhs' ),
+					'runningAudit'   => __( 'Running live audit & inspecting DOM...', 'zhs-site-audit-seo-diagnostics' ),
+					'auditComplete'  => __( 'SEO Audit completed successfully!', 'zhs-site-audit-seo-diagnostics' ),
+					'auditError'     => __( 'Audit encountered a network error. Please try again.', 'zhs-site-audit-seo-diagnostics' ),
+					'recheckBtn'     => __( 'Re-check Audit', 'zhs-site-audit-seo-diagnostics' ),
+					'rechecking'     => __( 'Auditing...', 'zhs-site-audit-seo-diagnostics' ),
+					'exporting'      => __( 'Preparing print report...', 'zhs-site-audit-seo-diagnostics' ),
+					'copySuccess'    => __( 'JSON report copied to clipboard!', 'zhs-site-audit-seo-diagnostics' ),
+					'allChecks'      => __( 'All Checks', 'zhs-site-audit-seo-diagnostics' ),
+					'pass'           => __( 'Pass', 'zhs-site-audit-seo-diagnostics' ),
+					'partial'        => __( 'Warning', 'zhs-site-audit-seo-diagnostics' ),
+					'fail'           => __( 'Fail', 'zhs-site-audit-seo-diagnostics' ),
+					'fullWebsite'    => __( 'Full Website Audit', 'zhs-site-audit-seo-diagnostics' ),
+					'selectAll'      => __( 'Select All', 'zhs-site-audit-seo-diagnostics' ),
+					'clearAll'       => __( 'Clear All', 'zhs-site-audit-seo-diagnostics' ),
+					'runAudit'       => __( 'Run Audit', 'zhs-site-audit-seo-diagnostics' ),
+					'pagesSelected'  => __( '%d Pages Selected', 'zhs-site-audit-seo-diagnostics' ),
+					'affectedPages'  => __( 'Affected Pages', 'zhs-site-audit-seo-diagnostics' ),
 				),
 			)
 		);
@@ -137,15 +137,15 @@ class SEO_Inspector_ZHS_Admin_Page {
 	 */
 	public function render_dashboard() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'seo-inspector-zhs' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'zhs-site-audit-seo-diagnostics' ) );
 		}
 
-		$template_path = SEO_INSPECTOR_ZHS_DIR . 'templates/dashboard-view.php';
+		$template_path = ZHS_AUDIT_DIR . 'templates/dashboard-view.php';
 
 		if ( file_exists( $template_path ) ) {
 			include $template_path;
 		} else {
-			echo '<div class="notice notice-error"><p>' . esc_html__( 'SEO Inspector dashboard template missing.', 'seo-inspector-zhs' ) . '</p></div>';
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'SEO Inspector dashboard template missing.', 'zhs-site-audit-seo-diagnostics' ) . '</p></div>';
 		}
 	}
 }

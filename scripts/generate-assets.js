@@ -1,5 +1,5 @@
 /**
- * SEO Inspector - WordPress.org SVN Assets Generator
+ * ZHS Site Audit and SEO Diagnostics - WordPress.org SVN Assets Generator
  *
  * Generates all official WordPress.org plugin directory assets:
  * - banner-772x250.png (Standard banner)
@@ -48,7 +48,7 @@ async function createZip(sourceDir, zipFilePath) {
 
 async function run() {
 	console.log('==========================================================');
-	console.log(' Generating WordPress.org Assets for SEO Inspector');
+	console.log(' Generating WordPress.org Assets for ZHS Site Audit');
 	console.log('==========================================================\n');
 
 	// 1. Clean previous assets

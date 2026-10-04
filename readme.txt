@@ -1,31 +1,32 @@
-=== SEO Inspector ===
+=== ZHS Site Audit and SEO Diagnostics ===
 Contributors: zhsaikot
 Donate link: https://mdziaulhasan.com/
-Tags: seo, audit, accessibility, site-health, json-ld
+Tags: site-audit, seo, accessibility, usability, json-ld
 Requires at least: 5.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Production-ready SEO audit & analytics engine with live front-end DOM diagnostics, accessibility, and GEO/AI-readiness verification.
+Comprehensive 17-point site audit and SEO diagnostics suite verifying usability, accessibility, indexing, schema, and GEO/AI readiness.
 
 == Description ==
 
-**SEO Inspector** is a production-grade, modular WordPress SEO audit and site-health analytics suite. Engineered with a sleek SaaS interface, it evaluates your live website against a comprehensive 17-point checklist covering modern search engine indexing, Core Web Usability, WCAG 2.4.1 Accessibility, and Generative Engine Optimization (GEO / AI-Readiness).
+**ZHS Site Audit and SEO Diagnostics** is a production-grade, modular WordPress website auditing and SEO analytics suite. Engineered with a modern SaaS dashboard interface, it evaluates your live website against a rigorous 17-point diagnostic framework spanning Core Web Usability, WCAG 2.4.1 Accessibility, Technical SEO Essentials, and Generative Engine Optimization (GEO / AI-Readiness).
 
-Unlike conventional tools that merely inspect static post meta, SEO Inspector executes real-time DOM parsing, validates HTTP transport headers, analyzes Schema.org JSON-LD knowledge graphs, and inspects database indexable content depth—delivering actionable, developer-grade insights directly within your WordPress administration dashboard.
+Unlike basic plugins that only inspect static post meta, ZHS Site Audit executes real-time DOM parsing, validates HTTP security and transport headers, deep-parses Schema.org JSON-LD knowledge graphs, checks XML sitemaps, and analyzes indexable database content depth—delivering actionable, developer-grade insights directly within your WordPress administration dashboard.
 
-### Why SEO Inspector?
-* **Zero External Cloud Dependencies:** All diagnostics run entirely on your server; your site metrics remain 100% private.
-* **Instant Asynchronous Re-checks:** Execute live re-audits via WordPress REST API with animated visual progress meters.
+### Why ZHS Site Audit and SEO Diagnostics?
+* **Multi-Page & Full Website Auditing:** Audit your primary homepage or scan representative published pages and posts across your entire site simultaneously, with granular per-page issue breakdowns.
+* **Zero External Cloud Dependencies:** All diagnostics run 100% locally on your WordPress server; your site telemetry and database metrics remain completely private.
+* **Instant Asynchronous Re-checks:** Execute live audits on demand via the WordPress REST API (`/wp-json/zhs-audit/v1/`) with animated visual progress meters.
 * **Client Presentation Ready:** 1-click executive report export featuring print-optimized CSS for PDF delivery, plus structured JSON downloads.
-* **Generative Engine (GEO) Ready:** Evaluates Schema.org entity disambiguation, `sameAs` reconciliation, and cross-channel brand coherence so AI search engines (ChatGPT, Google Gemini, Perplexity) accurately identify your business.
+* **Generative Engine (GEO) Ready:** Evaluates Schema.org entity disambiguation, `sameAs` reconciliation, and cross-channel brand coherence so AI search engines (ChatGPT, Google Gemini, Perplexity) accurately identify and attribute your business.
 
 == Features ==
 
-SEO Inspector divides your site's health into four core strategic pillars across 17 automated checks:
+ZHS Site Audit and SEO Diagnostics divides your site's health into four core strategic pillars across 17 automated checks:
 
 ### 1. Usability Diagnostics
 * **HTTPS & SSL Transport Security:** Checks active SSL protocol enforcement and detects Strict-Transport-Security (HSTS) headers.
@@ -57,29 +58,29 @@ SEO Inspector divides your site's health into four core strategic pillars across
 ### Automatic Installation (Recommended)
 1. Log in to your WordPress administrator dashboard.
 2. Navigate to **Plugins > Add New**.
-3. Search for `SEO Inspector`.
+3. Search for `ZHS Site Audit and SEO Diagnostics`.
 4. Click **Install Now**, then click **Activate**.
-5. Access the suite from the left menu: **SEO Inspector**.
+5. Access the suite from the left menu: **Site Audit**.
 
 ### Manual Installation
-1. Download the `seo-inspector-zhs.zip` file.
+1. Download the `zhs-site-audit-seo-diagnostics.zip` file.
 2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
 3. Select the zip file and click **Install Now**.
-4. Activate the plugin and open **SEO Inspector** from your admin menu.
+4. Activate the plugin and open **Site Audit** from your admin menu.
 
 == Frequently Asked Questions ==
 
 = Does running an audit slow down my site or affect visitor performance? =
 No. Audits run on-demand only when an administrator views the dashboard or clicks "Re-check Audit". Results are cached in WordPress transients for 12 hours to eliminate redundant queries. Your front-end visitors experience zero overhead.
 
-= Who can access the SEO Inspector dashboard and REST endpoints? =
+= Who can access the audit dashboard and REST endpoints? =
 Access is strictly restricted to authenticated users with the `manage_options` capability (typically site Administrators). All API routes are protected by capability checks and CSRF nonces (`X-WP-Nonce`).
 
 = What is GEO / AI-Readiness? =
 Generative Engine Optimization (GEO) ensures AI search engines like ChatGPT, Google Gemini, and Perplexity can parse and identify your brand's knowledge graph entity. The plugin validates Schema.org JSON-LD types and `sameAs` profiles to help AI platforms recognize your business.
 
 = Does this plugin replace plugins like Yoast SEO or Rank Math? =
-SEO Inspector complements any SEO plugin. It acts as an independent diagnostic auditor, verifying that whatever SEO or theme setup you have is actually functioning correctly on the live front-end DOM.
+ZHS Site Audit complements any SEO plugin. It acts as an independent diagnostic auditor, verifying that whatever SEO or theme setup you have is actually functioning correctly on the live front-end DOM.
 
 = Can I export audit reports for my clients? =
 Yes. Click the **Export Report** button to launch a print-optimized executive report ready for direct printing or saving as a clean PDF. You can also export structured JSON data via the **JSON** button.
@@ -94,16 +95,9 @@ No. All scanning, parsing, and scoring logic runs 100% locally on your WordPress
 
 == Changelog ==
 
-= 1.1.0 =
-* Feature: Multi-Page and Full Website Audit System with custom scope selection.
-* Feature: Modern SaaS Multi-Select dropdown with live page search and "Full Website Audit" master toggle.
-* Feature: Granular Affected Pages Breakdown in diagnostic check cards, displaying Page Names, clickable URLs, and specific DOM findings per page.
-* Performance: Optimized batch scanning with 8-second request timeouts and fallback synthetic DOM analysis.
-
 = 1.0.0 =
-* Initial official release for WordPress.org.
-* 17-point dynamic DOM and database audit engine.
-* Core modules: Usability, WCAG 2.4.1 Accessibility, SEO Essentials, and GEO/AI-Readiness.
-* Asynchronous REST API integration with real-time audit triggers.
-* Modern SaaS UI with animated circular score progress dial and KPI stat counters.
-* Executive printable report stylesheet and JSON export functionality.
+* Initial official release of ZHS Site Audit and SEO Diagnostics.
+* 17-point dynamic DOM and database audit engine across Usability, Accessibility, SEO Essentials, and GEO / AI-Readiness.
+* Multi-Page and Full Website Audit Selector with live filtering and granular per-page diagnostics.
+* Real-time asynchronous REST API integration with animated KPI meters and interactive status filters.
+* Executive printable report stylesheet and structured JSON export functionality.

@@ -1,8 +1,8 @@
 # ==============================================================================
-# SEO Inspector ZHS - Production Release Packaging Script (PowerShell)
+# ZHS Site Audit and SEO Diagnostics - Production Release Packaging Script (PowerShell)
 #
 # Generates a 100% WordPress-compliant ZIP archive with forward slashes (/)
-# preventing the "Could not copy file. seo-inspector-zhs\assets\" error.
+# preventing the "Could not copy file. zhs-site-audit-seo-diagnostics\assets\" error.
 # ==============================================================================
 
 $ErrorActionPreference = "Stop"
@@ -14,7 +14,7 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     node $ScriptPath
 } else {
     Write-Host "[!] Node.js not detected in PATH. Executing PowerShell fallback..." -ForegroundColor Yellow
-    $PluginSlug = "seo-inspector-zhs"
+    $PluginSlug = "zhs-site-audit-seo-diagnostics"
     $BuildDir   = Join-Path $RootDir "dist"
     $StageDir   = Join-Path $BuildDir $PluginSlug
     $ZipFile    = Join-Path $BuildDir "$PluginSlug.zip"
@@ -22,7 +22,7 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
     if (Test-Path $BuildDir) { Remove-Item -Recurse -Force $BuildDir }
     New-Item -ItemType Directory -Force -Path $StageDir | Out-Null
 
-    Copy-Item (Join-Path $RootDir "seo-inspector-zhs.php") $StageDir -Force
+    Copy-Item (Join-Path $RootDir "zhs-site-audit-seo-diagnostics.php") $StageDir -Force
     Copy-Item (Join-Path $RootDir "readme.txt") $StageDir -Force
     Copy-Item (Join-Path $RootDir "LICENSE") $StageDir -Force
     Copy-Item (Join-Path $RootDir "includes") $StageDir -Recurse -Force

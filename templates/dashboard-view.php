@@ -1,11 +1,11 @@
 <?php
 /**
- * SEO Inspector ZHS - Dashboard View Template
+ * ZHS Site Audit and SEO Diagnostics - Dashboard View Template
  *
  * Modern SaaS UI template for the SEO Inspector & Site Audit dashboard.
  *
- * @package    SEO_Inspector_ZHS
- * @subpackage SEO_Inspector_ZHS/templates
+ * @package    ZHS_Site_Audit_SEO_Diagnostics
+ * @subpackage ZHS_Site_Audit_SEO_Diagnostics/templates
  * @author     MD. Ziaul Hasan <https://mdziaulhasan.com/>
  * @license    GPL-2.0-or-later
  */
@@ -25,7 +25,7 @@ $failed_count    = $initial_audit['failed_count'] ?? 0;
 $categories      = $initial_audit['category_scores'] ?? array();
 $checks          = $initial_audit['checks'] ?? array();
 $site_url        = $initial_audit['site_url'] ?? home_url( '/' );
-$page_name       = $initial_audit['page_name'] ?? __( 'Front Page (Homepage)', 'seo-inspector-zhs' );
+$page_name       = $initial_audit['page_name'] ?? __( 'Front Page (Homepage)', 'zhs-site-audit-seo-diagnostics' );
 $page_url        = $initial_audit['page_url'] ?? $site_url;
 $audit_mode      = $initial_audit['audit_mode'] ?? 'single';
 $scope_label     = ( $audit_mode === 'single' ) ? $page_name : ( $initial_audit['scope_label'] ?? $page_name );
@@ -40,7 +40,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 		<div class="si-notification-icon">
 			<svg class="si-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
 		</div>
-		<div class="si-notification-text" id="si-notification-msg"><?php esc_html_e( 'Running live SEO audit...', 'seo-inspector-zhs' ); ?></div>
+		<div class="si-notification-text" id="si-notification-msg"><?php esc_html_e( 'Running live SEO audit...', 'zhs-site-audit-seo-diagnostics' ); ?></div>
 	</div>
 
 	<!-- SaaS Top Bar Header -->
@@ -56,7 +56,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 			</div>
 			<div class="si-brand-info">
 				<div class="si-brand-title-row">
-					<h1 class="si-brand-title"><?php esc_html_e( 'SEO Inspector &amp; Site Audit', 'seo-inspector-zhs' ); ?></h1>
+					<h1 class="si-brand-title"><?php esc_html_e( 'ZHS Site Audit &amp; SEO Diagnostics', 'zhs-site-audit-seo-diagnostics' ); ?></h1>
 					<span class="si-badge-version">v1.1.0</span>
 				</div>
 				<div class="si-brand-meta">
@@ -71,7 +71,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 					</span>
 					<span class="si-meta-divider">&bull;</span>
 					<span class="si-last-scan">
-						<?php esc_html_e( 'Last Audited:', 'seo-inspector-zhs' ); ?>
+						<?php esc_html_e( 'Last Audited:', 'zhs-site-audit-seo-diagnostics' ); ?>
 						<strong id="si-last-audit-time"><?php echo esc_html( $last_audit ); ?></strong>
 					</span>
 				</div>
@@ -81,7 +81,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 		<div class="si-topbar-actions">
 			<!-- Multi-Page & Full Website Selector Dropdown -->
 			<div class="si-multiselect-dropdown" id="si-multiselect-wrap">
-				<button type="button" class="si-multiselect-trigger" id="si-multiselect-trigger" aria-haspopup="true" aria-expanded="false" title="<?php esc_attr_e( 'Select pages to audit or scan full website', 'seo-inspector-zhs' ); ?>">
+				<button type="button" class="si-multiselect-trigger" id="si-multiselect-trigger" aria-haspopup="true" aria-expanded="false" title="<?php esc_attr_e( 'Select pages to audit or scan full website', 'zhs-site-audit-seo-diagnostics' ); ?>">
 					<span class="si-ms-icon">
 						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
 					</span>
@@ -97,12 +97,12 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 					<div class="si-ms-panel-header">
 						<div class="si-ms-search-wrap">
 							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-							<input type="text" id="si-ms-search-input" class="si-ms-search-input" placeholder="<?php esc_attr_e( 'Filter pages & posts...', 'seo-inspector-zhs' ); ?>">
+							<input type="text" id="si-ms-search-input" class="si-ms-search-input" placeholder="<?php esc_attr_e( 'Filter pages & posts...', 'zhs-site-audit-seo-diagnostics' ); ?>">
 						</div>
 						<div class="si-ms-actions">
-							<button type="button" class="si-ms-btn-link" id="si-ms-select-all"><?php esc_html_e( 'Select All', 'seo-inspector-zhs' ); ?></button>
+							<button type="button" class="si-ms-btn-link" id="si-ms-select-all"><?php esc_html_e( 'Select All', 'zhs-site-audit-seo-diagnostics' ); ?></button>
 							<span class="si-ms-sep">&bull;</span>
-							<button type="button" class="si-ms-btn-link" id="si-ms-clear-all"><?php esc_html_e( 'Clear', 'seo-inspector-zhs' ); ?></button>
+							<button type="button" class="si-ms-btn-link" id="si-ms-clear-all"><?php esc_html_e( 'Clear', 'zhs-site-audit-seo-diagnostics' ); ?></button>
 						</div>
 					</div>
 
@@ -112,15 +112,15 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 							<input type="checkbox" id="si-cb-full-site" class="si-ms-checkbox master-checkbox" value="__full_site__" <?php checked( $audit_mode, 'full_site' ); ?>>
 							<div class="si-ms-item-body">
 								<div class="si-ms-item-title-row">
-									<strong class="si-ms-item-title"><?php esc_html_e( 'Full Website Audit', 'seo-inspector-zhs' ); ?></strong>
-									<span class="si-ms-tag tag-master"><?php esc_html_e( 'Recommended', 'seo-inspector-zhs' ); ?></span>
+									<strong class="si-ms-item-title"><?php esc_html_e( 'Full Website Audit', 'zhs-site-audit-seo-diagnostics' ); ?></strong>
+									<span class="si-ms-tag tag-master"><?php esc_html_e( 'Recommended', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 								</div>
-								<span class="si-ms-item-desc"><?php esc_html_e( 'Scan all core published pages & posts across the entire site', 'seo-inspector-zhs' ); ?></span>
+								<span class="si-ms-item-desc"><?php esc_html_e( 'Scan all core published pages & posts across the entire site', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 							</div>
 						</label>
 
 						<div class="si-ms-divider">
-							<span><?php esc_html_e( 'Or select individual pages to audit:', 'seo-inspector-zhs' ); ?></span>
+							<span><?php esc_html_e( 'Or select individual pages to audit:', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 						</div>
 
 						<!-- Scannable Pages List -->
@@ -128,7 +128,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 							<?php foreach ( $scannable_pages as $idx => $sp ) :
 								$is_front   = ( $sp['id'] === 'front' );
 								$tag_class  = $is_front ? 'tag-front' : ( strpos( $sp['title'], 'Post' ) !== false ? 'tag-post' : 'tag-page' );
-								$tag_name   = $is_front ? __( 'Front Page', 'seo-inspector-zhs' ) : ( strpos( $sp['title'], 'Post' ) !== false ? __( 'Post', 'seo-inspector-zhs' ) : __( 'Page', 'seo-inspector-zhs' ) );
+								$tag_name   = $is_front ? __( 'Front Page', 'zhs-site-audit-seo-diagnostics' ) : ( strpos( $sp['title'], 'Post' ) !== false ? __( 'Post', 'zhs-site-audit-seo-diagnostics' ) : __( 'Page', 'zhs-site-audit-seo-diagnostics' ) );
 								$is_checked = ( $audit_mode === 'full_site' ) ? true : ( $sp['url'] === $page_url || ( empty( $initial_audit['scanned_urls'] ) && $is_front ) || in_array( $sp['url'], $initial_audit['scanned_urls'] ?? array(), true ) );
 							?>
 								<label class="si-ms-item page-item" data-search="<?php echo esc_attr( strtolower( $sp['title'] . ' ' . $sp['url'] ) ); ?>">
@@ -147,51 +147,51 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 
 					<div class="si-ms-footer">
 						<div class="si-ms-status-summary">
-							<span id="si-ms-selected-summary"><?php echo ( $audit_mode === 'full_site' ) ? esc_html__( 'Full website selected', 'seo-inspector-zhs' ) : ( ( $audit_mode === 'single' ) ? esc_html__( '1 page selected', 'seo-inspector-zhs' ) : sprintf( esc_html__( '%d pages selected', 'seo-inspector-zhs' ), count( $initial_audit['scanned_urls'] ?? array( 1 ) ) ) ); ?></span>
+							<span id="si-ms-selected-summary"><?php echo ( $audit_mode === 'full_site' ) ? esc_html__( 'Full website selected', 'zhs-site-audit-seo-diagnostics' ) : ( ( $audit_mode === 'single' ) ? esc_html__( '1 page selected', 'zhs-site-audit-seo-diagnostics' ) : sprintf( esc_html__( '%d pages selected', 'zhs-site-audit-seo-diagnostics' ), count( $initial_audit['scanned_urls'] ?? array( 1 ) ) ) ); ?></span>
 						</div>
 						<div class="si-ms-footer-btns">
 							<button type="button" class="si-btn si-btn-primary si-btn-sm" id="si-btn-run-ms-audit">
 								<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-								<span><?php esc_html_e( 'Apply &amp; Run Audit', 'seo-inspector-zhs' ); ?></span>
+								<span><?php esc_html_e( 'Apply &amp; Run Audit', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 							</button>
 						</div>
 					</div>
 				</div>
 			</div>
 			<!-- Re-check Audit Button -->
-			<button id="si-btn-recheck" class="si-btn si-btn-primary" type="button" title="<?php esc_attr_e( 'Trigger a fresh live scan of front-end DOM and database', 'seo-inspector-zhs' ); ?>">
+			<button id="si-btn-recheck" class="si-btn si-btn-primary" type="button" title="<?php esc_attr_e( 'Trigger a fresh live scan of front-end DOM and database', 'zhs-site-audit-seo-diagnostics' ); ?>">
 				<svg class="si-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
 					<path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
 				</svg>
-				<span class="si-btn-label"><?php esc_html_e( 'Re-check Audit', 'seo-inspector-zhs' ); ?></span>
+				<span class="si-btn-label"><?php esc_html_e( 'Re-check Audit', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 			</button>
 
 			<!-- Export Report Button (Print/PDF) -->
-			<button id="si-btn-export" class="si-btn si-btn-secondary" type="button" title="<?php esc_attr_e( 'Generate clean printable report / PDF for clients', 'seo-inspector-zhs' ); ?>">
+			<button id="si-btn-export" class="si-btn si-btn-secondary" type="button" title="<?php esc_attr_e( 'Generate clean printable report / PDF for clients', 'zhs-site-audit-seo-diagnostics' ); ?>">
 				<svg class="si-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
 					<polyline points="6 9 6 2 18 2 18 9"></polyline>
 					<path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
 					<rect x="6" y="14" width="12" height="8"></rect>
 				</svg>
-				<span class="si-btn-label"><?php esc_html_e( 'Export Report', 'seo-inspector-zhs' ); ?></span>
+				<span class="si-btn-label"><?php esc_html_e( 'Export Report', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 			</button>
 
 			<!-- Export JSON Button -->
-			<button id="si-btn-json" class="si-btn si-btn-outline" type="button" title="<?php esc_attr_e( 'Download structured JSON audit report', 'seo-inspector-zhs' ); ?>">
+			<button id="si-btn-json" class="si-btn si-btn-outline" type="button" title="<?php esc_attr_e( 'Download structured JSON audit report', 'zhs-site-audit-seo-diagnostics' ); ?>">
 				<svg class="si-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
 					<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
 					<polyline points="7 10 12 15 17 10"></polyline>
 					<line x1="12" y1="15" x2="12" y2="3"></line>
 				</svg>
-				<span class="si-btn-label"><?php esc_html_e( 'JSON', 'seo-inspector-zhs' ); ?></span>
+				<span class="si-btn-label"><?php esc_html_e( 'JSON', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 			</button>
 
 			<!-- Author Profile Attribution -->
 			<div class="si-author-badge">
-				<a href="https://mdziaulhasan.com/" target="_blank" rel="noopener noreferrer" class="si-author-link" title="<?php esc_attr_e( 'Lead Developer: MD. Ziaul Hasan', 'seo-inspector-zhs' ); ?>">
+				<a href="https://mdziaulhasan.com/" target="_blank" rel="noopener noreferrer" class="si-author-link" title="<?php esc_attr_e( 'Lead Developer: MD. Ziaul Hasan', 'zhs-site-audit-seo-diagnostics' ); ?>">
 					<div class="si-author-avatar">ZH</div>
 					<div class="si-author-text">
-						<span class="si-author-role"><?php esc_html_e( 'Plugin Author', 'seo-inspector-zhs' ); ?></span>
+						<span class="si-author-role"><?php esc_html_e( 'Plugin Author', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 						<span class="si-author-name">
 							MD. Ziaul Hasan
 							<svg class="si-verified-check" width="13" height="13" viewBox="0 0 24 24" fill="#0ea5e9"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 11 15 16 9" stroke="#ffffff" stroke-width="2.5" fill="none"></polyline></svg>
@@ -217,7 +217,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 				</div>
 			</div>
 			<div class="si-kpi-score-content">
-				<span class="si-kpi-label"><?php esc_html_e( 'Overall Audit Score', 'seo-inspector-zhs' ); ?></span>
+				<span class="si-kpi-label"><?php esc_html_e( 'Overall Audit Score', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 				<div class="si-grade-pill-row">
 					<span id="si-grade-badge" class="si-grade-pill grade-<?php echo esc_attr( strtolower( substr( $grade, 0, 1 ) ) ); ?>">
 						<?php echo esc_html( 'Grade ' . $grade ); ?>
@@ -228,54 +228,54 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 		</div>
 
 		<!-- KPI 2: Passed Checks -->
-		<div class="si-kpi-card si-kpi-stat-card pass-stat" data-status-filter="pass" role="button" tabindex="0" title="<?php esc_attr_e( 'Click to filter passed checks', 'seo-inspector-zhs' ); ?>">
+		<div class="si-kpi-card si-kpi-stat-card pass-stat" data-status-filter="pass" role="button" tabindex="0" title="<?php esc_attr_e( 'Click to filter passed checks', 'zhs-site-audit-seo-diagnostics' ); ?>">
 			<div class="si-stat-header">
 				<span class="si-stat-icon pass">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
 				</span>
-				<span class="si-badge-pill pass-pill"><?php esc_html_e( 'PASS', 'seo-inspector-zhs' ); ?></span>
+				<span class="si-badge-pill pass-pill"><?php esc_html_e( 'PASS', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 			</div>
 			<div class="si-stat-body">
 				<div class="si-stat-count" id="si-passed-count"><?php echo esc_html( $passed_count ); ?></div>
-				<div class="si-stat-title"><?php esc_html_e( 'Passed Checks', 'seo-inspector-zhs' ); ?></div>
-				<div class="si-stat-subtext"><?php esc_html_e( 'Optimal compliance with SEO standards', 'seo-inspector-zhs' ); ?></div>
+				<div class="si-stat-title"><?php esc_html_e( 'Passed Checks', 'zhs-site-audit-seo-diagnostics' ); ?></div>
+				<div class="si-stat-subtext"><?php esc_html_e( 'Optimal compliance with SEO standards', 'zhs-site-audit-seo-diagnostics' ); ?></div>
 			</div>
 		</div>
 
 		<!-- KPI 3: Partial / Warnings -->
-		<div class="si-kpi-card si-kpi-stat-card partial-stat" data-status-filter="partial" role="button" tabindex="0" title="<?php esc_attr_e( 'Click to filter partial warnings', 'seo-inspector-zhs' ); ?>">
+		<div class="si-kpi-card si-kpi-stat-card partial-stat" data-status-filter="partial" role="button" tabindex="0" title="<?php esc_attr_e( 'Click to filter partial warnings', 'zhs-site-audit-seo-diagnostics' ); ?>">
 			<div class="si-stat-header">
 				<span class="si-stat-icon partial">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
 				</span>
-				<span class="si-badge-pill partial-pill"><?php esc_html_e( 'PARTIAL', 'seo-inspector-zhs' ); ?></span>
+				<span class="si-badge-pill partial-pill"><?php esc_html_e( 'PARTIAL', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 			</div>
 			<div class="si-stat-body">
 				<div class="si-stat-count" id="si-partial-count"><?php echo esc_html( $partial_count ); ?></div>
-				<div class="si-stat-title"><?php esc_html_e( 'Warnings / Partial', 'seo-inspector-zhs' ); ?></div>
-				<div class="si-stat-subtext"><?php esc_html_e( 'Minor tweaks required for full score', 'seo-inspector-zhs' ); ?></div>
+				<div class="si-stat-title"><?php esc_html_e( 'Warnings / Partial', 'zhs-site-audit-seo-diagnostics' ); ?></div>
+				<div class="si-stat-subtext"><?php esc_html_e( 'Minor tweaks required for full score', 'zhs-site-audit-seo-diagnostics' ); ?></div>
 			</div>
 		</div>
 
 		<!-- KPI 4: Failed Checks -->
-		<div class="si-kpi-card si-kpi-stat-card fail-stat" data-status-filter="fail" role="button" tabindex="0" title="<?php esc_attr_e( 'Click to filter failed checks', 'seo-inspector-zhs' ); ?>">
+		<div class="si-kpi-card si-kpi-stat-card fail-stat" data-status-filter="fail" role="button" tabindex="0" title="<?php esc_attr_e( 'Click to filter failed checks', 'zhs-site-audit-seo-diagnostics' ); ?>">
 			<div class="si-stat-header">
 				<span class="si-stat-icon fail">
 					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
 				</span>
-				<span class="si-badge-pill fail-pill"><?php esc_html_e( 'FAIL', 'seo-inspector-zhs' ); ?></span>
+				<span class="si-badge-pill fail-pill"><?php esc_html_e( 'FAIL', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 			</div>
 			<div class="si-stat-body">
 				<div class="si-stat-count" id="si-failed-count"><?php echo esc_html( $failed_count ); ?></div>
-				<div class="si-stat-title"><?php esc_html_e( 'Critical Issues', 'seo-inspector-zhs' ); ?></div>
-				<div class="si-stat-subtext"><?php esc_html_e( 'High-impact bottlenecks to resolve', 'seo-inspector-zhs' ); ?></div>
+				<div class="si-stat-title"><?php esc_html_e( 'Critical Issues', 'zhs-site-audit-seo-diagnostics' ); ?></div>
+				<div class="si-stat-subtext"><?php esc_html_e( 'High-impact bottlenecks to resolve', 'zhs-site-audit-seo-diagnostics' ); ?></div>
 			</div>
 		</div>
 
 		<!-- KPI 5: Category Mini-Scores Overview Card -->
 		<div class="si-kpi-card si-kpi-categories-card">
 			<div class="si-categories-header">
-				<span class="si-kpi-label"><?php esc_html_e( 'Category Breakdown', 'seo-inspector-zhs' ); ?></span>
+				<span class="si-kpi-label"><?php esc_html_e( 'Category Breakdown', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 				<span class="si-badge-pill info-pill">4 Core Pillars</span>
 			</div>
 
@@ -289,7 +289,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 				?>
 				<div class="si-cat-bar-item" data-category="usability">
 					<div class="si-cat-bar-meta">
-						<span class="si-cat-name"><?php esc_html_e( 'Usability', 'seo-inspector-zhs' ); ?></span>
+						<span class="si-cat-name"><?php esc_html_e( 'Usability', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 						<span class="si-cat-score" id="score-val-usability"><?php echo esc_html( $usab['score_10'] ); ?>/10</span>
 					</div>
 					<div class="si-progress-track">
@@ -300,7 +300,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 				<!-- Accessibility -->
 				<div class="si-cat-bar-item" data-category="accessibility">
 					<div class="si-cat-bar-meta">
-						<span class="si-cat-name"><?php esc_html_e( 'Accessibility', 'seo-inspector-zhs' ); ?></span>
+						<span class="si-cat-name"><?php esc_html_e( 'Accessibility', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 						<span class="si-cat-score" id="score-val-accessibility"><?php echo esc_html( $acce['score_10'] ); ?>/10</span>
 					</div>
 					<div class="si-progress-track">
@@ -311,7 +311,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 				<!-- SEO -->
 				<div class="si-cat-bar-item" data-category="seo">
 					<div class="si-cat-bar-meta">
-						<span class="si-cat-name"><?php esc_html_e( 'SEO Essentials', 'seo-inspector-zhs' ); ?></span>
+						<span class="si-cat-name"><?php esc_html_e( 'SEO Essentials', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 						<span class="si-cat-score" id="score-val-seo"><?php echo esc_html( $seop['score_10'] ); ?>/10</span>
 					</div>
 					<div class="si-progress-track">
@@ -322,7 +322,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 				<!-- GEO & AI Readiness -->
 				<div class="si-cat-bar-item" data-category="geo_ai">
 					<div class="si-cat-bar-meta">
-						<span class="si-cat-name"><?php esc_html_e( 'GEO &amp; AI-Readiness', 'seo-inspector-zhs' ); ?></span>
+						<span class="si-cat-name"><?php esc_html_e( 'GEO &amp; AI-Readiness', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 						<span class="si-cat-score" id="score-val-geo_ai"><?php echo esc_html( $geop['score_10'] ); ?>/10</span>
 					</div>
 					<div class="si-progress-track">
@@ -340,23 +340,23 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 			<!-- Category Tabs -->
 			<div class="si-filter-tabs" id="si-category-tabs">
 				<button class="si-tab-btn active" data-category="all" type="button">
-					<?php esc_html_e( 'All Checks', 'seo-inspector-zhs' ); ?>
+					<?php esc_html_e( 'All Checks', 'zhs-site-audit-seo-diagnostics' ); ?>
 					<span class="si-tab-count" id="tab-count-all">17</span>
 				</button>
 				<button class="si-tab-btn" data-category="usability" type="button">
-					<?php esc_html_e( 'Usability', 'seo-inspector-zhs' ); ?>
+					<?php esc_html_e( 'Usability', 'zhs-site-audit-seo-diagnostics' ); ?>
 					<span class="si-tab-count" id="tab-count-usability">5</span>
 				</button>
 				<button class="si-tab-btn" data-category="accessibility" type="button">
-					<?php esc_html_e( 'Accessibility', 'seo-inspector-zhs' ); ?>
+					<?php esc_html_e( 'Accessibility', 'zhs-site-audit-seo-diagnostics' ); ?>
 					<span class="si-tab-count" id="tab-count-accessibility">4</span>
 				</button>
 				<button class="si-tab-btn" data-category="seo" type="button">
-					<?php esc_html_e( 'SEO Essentials', 'seo-inspector-zhs' ); ?>
+					<?php esc_html_e( 'SEO Essentials', 'zhs-site-audit-seo-diagnostics' ); ?>
 					<span class="si-tab-count" id="tab-count-seo">6</span>
 				</button>
 				<button class="si-tab-btn" data-category="geo_ai" type="button">
-					<?php esc_html_e( 'GEO &amp; AI-Readiness', 'seo-inspector-zhs' ); ?>
+					<?php esc_html_e( 'GEO &amp; AI-Readiness', 'zhs-site-audit-seo-diagnostics' ); ?>
 					<span class="si-tab-count" id="tab-count-geo_ai">2</span>
 				</button>
 			</div>
@@ -366,20 +366,20 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 				<!-- Search Filter -->
 				<div class="si-search-input-wrap">
 					<svg class="si-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-					<input type="text" id="si-search-input" class="si-search-input" placeholder="<?php esc_attr_e( 'Search checks...', 'seo-inspector-zhs' ); ?>" autocomplete="off" />
+					<input type="text" id="si-search-input" class="si-search-input" placeholder="<?php esc_attr_e( 'Search checks...', 'zhs-site-audit-seo-diagnostics' ); ?>" autocomplete="off" />
 				</div>
 
 				<!-- Status Filter Pills -->
 				<div class="si-status-pills" id="si-status-pills">
-					<button class="si-pill-btn active" data-status="all" type="button"><?php esc_html_e( 'All', 'seo-inspector-zhs' ); ?></button>
-					<button class="si-pill-btn" data-status="pass" type="button"><?php esc_html_e( 'Passed', 'seo-inspector-zhs' ); ?></button>
-					<button class="si-pill-btn" data-status="partial" type="button"><?php esc_html_e( 'Warnings', 'seo-inspector-zhs' ); ?></button>
-					<button class="si-pill-btn" data-status="fail" type="button"><?php esc_html_e( 'Failed', 'seo-inspector-zhs' ); ?></button>
+					<button class="si-pill-btn active" data-status="all" type="button"><?php esc_html_e( 'All', 'zhs-site-audit-seo-diagnostics' ); ?></button>
+					<button class="si-pill-btn" data-status="pass" type="button"><?php esc_html_e( 'Passed', 'zhs-site-audit-seo-diagnostics' ); ?></button>
+					<button class="si-pill-btn" data-status="partial" type="button"><?php esc_html_e( 'Warnings', 'zhs-site-audit-seo-diagnostics' ); ?></button>
+					<button class="si-pill-btn" data-status="fail" type="button"><?php esc_html_e( 'Failed', 'zhs-site-audit-seo-diagnostics' ); ?></button>
 				</div>
 
 				<!-- Expand/Collapse Toggle -->
-				<button id="si-toggle-all-btn" class="si-toggle-all-btn" type="button" title="<?php esc_attr_e( 'Expand or collapse all check detail panels', 'seo-inspector-zhs' ); ?>">
-					<span id="si-toggle-all-text"><?php esc_html_e( 'Expand All', 'seo-inspector-zhs' ); ?></span>
+				<button id="si-toggle-all-btn" class="si-toggle-all-btn" type="button" title="<?php esc_attr_e( 'Expand or collapse all check detail panels', 'zhs-site-audit-seo-diagnostics' ); ?>">
+					<span id="si-toggle-all-text"><?php esc_html_e( 'Expand All', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 				</button>
 			</div>
 		</div>
@@ -410,15 +410,15 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 						<div class="si-check-header" tabindex="0" role="button" aria-expanded="false">
 							<div class="si-check-status-col">
 								<?php if ( $status === 'pass' ) : ?>
-									<span class="si-status-badge pass" title="<?php esc_attr_e( 'Passed Check (Score 1.0)', 'seo-inspector-zhs' ); ?>">
+									<span class="si-status-badge pass" title="<?php esc_attr_e( 'Passed Check (Score 1.0)', 'zhs-site-audit-seo-diagnostics' ); ?>">
 										<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
 									</span>
 								<?php elseif ( $status === 'partial' ) : ?>
-									<span class="si-status-badge partial" title="<?php esc_attr_e( 'Partial Warning (Score 0.5)', 'seo-inspector-zhs' ); ?>">
+									<span class="si-status-badge partial" title="<?php esc_attr_e( 'Partial Warning (Score 0.5)', 'zhs-site-audit-seo-diagnostics' ); ?>">
 										<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
 									</span>
 								<?php else : ?>
-									<span class="si-status-badge fail" title="<?php esc_attr_e( 'Failed Check (Score 0.0)', 'seo-inspector-zhs' ); ?>">
+									<span class="si-status-badge fail" title="<?php esc_attr_e( 'Failed Check (Score 0.0)', 'zhs-site-audit-seo-diagnostics' ); ?>">
 										<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
 									</span>
 								<?php endif; ?>
@@ -447,7 +447,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 									<div class="si-affected-header">
 										<span class="si-affected-badge">
 											<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-											<strong><?php printf( esc_html__( 'Affected Pages (%1$d of %2$d scanned):', 'seo-inspector-zhs' ), count( $affected_pages ), $total_scanned ); ?></strong>
+											<strong><?php printf( esc_html__( 'Affected Pages (%1$d of %2$d scanned):', 'zhs-site-audit-seo-diagnostics' ), count( $affected_pages ), $total_scanned ); ?></strong>
 										</span>
 									</div>
 									<div class="si-affected-list">
@@ -475,18 +475,18 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 								<!-- All Scanned Pages Passed -->
 								<div class="si-passed-scope-chip">
 									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-									<span><?php printf( esc_html__( 'Passed across all %d audited pages on your website.', 'seo-inspector-zhs' ), $total_scanned ); ?></span>
+									<span><?php printf( esc_html__( 'Passed across all %d audited pages on your website.', 'zhs-site-audit-seo-diagnostics' ), $total_scanned ); ?></span>
 								</div>
 							<?php else : ?>
 								<!-- Single Page Location Chip -->
 								<div class="si-page-location-chip">
 									<span class="si-page-label">
 										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-										<strong><?php esc_html_e( 'Page:', 'seo-inspector-zhs' ); ?></strong>
+										<strong><?php esc_html_e( 'Page:', 'zhs-site-audit-seo-diagnostics' ); ?></strong>
 										<span class="si-chip-page-name"><?php echo esc_html( $check_page ); ?></span>
 									</span>
 									<span class="si-page-sep">&bull;</span>
-									<a href="<?php echo esc_url( $check_url ); ?>" target="_blank" rel="noopener noreferrer" class="si-page-url-link" title="<?php esc_attr_e( 'Open audited page in a new browser tab', 'seo-inspector-zhs' ); ?>">
+									<a href="<?php echo esc_url( $check_url ); ?>" target="_blank" rel="noopener noreferrer" class="si-page-url-link" title="<?php esc_attr_e( 'Open audited page in a new browser tab', 'zhs-site-audit-seo-diagnostics' ); ?>">
 										<span><?php echo esc_html( $check_url ); ?></span>
 										<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
 									</a>
@@ -498,7 +498,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 								<div class="si-detail-block findings-block">
 									<div class="si-detail-heading">
 										<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-										<?php esc_html_e( 'Detected Findings &amp; Evidence', 'seo-inspector-zhs' ); ?>
+										<?php esc_html_e( 'Detected Findings &amp; Evidence', 'zhs-site-audit-seo-diagnostics' ); ?>
 									</div>
 									<div class="si-detail-content">
 										<p class="si-findings-text"><?php echo nl2br( esc_html( $details ) ); ?></p>
@@ -509,7 +509,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 								<div class="si-detail-block rec-block">
 									<div class="si-detail-heading">
 										<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-										<?php esc_html_e( 'Actionable Recommendation', 'seo-inspector-zhs' ); ?>
+										<?php esc_html_e( 'Actionable Recommendation', 'zhs-site-audit-seo-diagnostics' ); ?>
 									</div>
 									<div class="si-detail-content">
 										<p class="si-rec-text"><?php echo nl2br( esc_html( $rec ) ); ?></p>
@@ -521,7 +521,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 				<?php endforeach; ?>
 			<?php else : ?>
 				<div class="si-empty-state">
-					<p><?php esc_html_e( 'No audit data available. Click "Re-check Audit" to perform your first scan.', 'seo-inspector-zhs' ); ?></p>
+					<p><?php esc_html_e( 'No audit data available. Click "Re-check Audit" to perform your first scan.', 'zhs-site-audit-seo-diagnostics' ); ?></p>
 				</div>
 			<?php endif; ?>
 		</div>
@@ -530,10 +530,10 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 	<!-- Clean Footer -->
 	<footer class="si-dashboard-footer">
 		<div class="si-footer-left">
-			<span><?php esc_html_e( 'SEO Inspector &bull; Production-grade WordPress SEO Audit Engine', 'seo-inspector-zhs' ); ?></span>
+			<span><?php esc_html_e( 'ZHS Site Audit &bull; 17-Point Modern SEO &amp; Diagnostics Engine', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 		</div>
 		<div class="si-footer-right">
-			<span><?php esc_html_e( 'Engineered by', 'seo-inspector-zhs' ); ?></span>
+			<span><?php esc_html_e( 'Engineered by', 'zhs-site-audit-seo-diagnostics' ); ?></span>
 			<a href="https://mdziaulhasan.com/" target="_blank" rel="noopener noreferrer" class="si-footer-author">MD. Ziaul Hasan</a>
 		</div>
 	</footer>
