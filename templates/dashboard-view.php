@@ -57,7 +57,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 			<div class="si-brand-info">
 				<div class="si-brand-title-row">
 					<h1 class="si-brand-title"><?php esc_html_e( 'ZHS Site Audit &amp; SEO Diagnostics', 'zhs-site-audit-seo-diagnostics' ); ?></h1>
-					<span class="si-badge-version">v1.1.0</span>
+					<span class="si-badge-version">v<?php echo esc_html( ZHS_AUDIT_VERSION ); ?></span>
 				</div>
 				<div class="si-brand-meta">
 					<span class="si-audited-page-chip">

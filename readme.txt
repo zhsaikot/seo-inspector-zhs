@@ -3,7 +3,7 @@ Contributors: zhsaikot
 Donate link: https://mdziaulhasan.com/
 Tags: site-audit, seo, accessibility, usability, json-ld
 Requires at least: 5.8
-Tested up to: 7.1
+Tested up to: 6.7
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
