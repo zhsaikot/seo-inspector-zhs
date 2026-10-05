@@ -105,22 +105,10 @@ final class ZHS_Audit {
 	 * Register general hooks.
 	 */
 	private function register_hooks() {
-		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 		add_filter( 'plugin_action_links_' . ZHS_AUDIT_BASENAME, array( $this, 'add_action_links' ) );
 
 		register_activation_hook( ZHS_AUDIT_FILE, array( $this, 'activate' ) );
 		register_deactivation_hook( ZHS_AUDIT_FILE, array( $this, 'deactivate' ) );
-	}
-
-	/**
-	 * Load translation textdomain.
-	 */
-	public function load_textdomain() {
-		load_plugin_textdomain(
-			'zhs-site-audit-seo-diagnostics',
-			false,
-			dirname( ZHS_AUDIT_BASENAME ) . '/languages'
-		);
 	}
 
 	/**
@@ -142,11 +130,12 @@ final class ZHS_Audit {
 
 	/**
 	 * Plugin activation routine.
+	 * Performs zero blocking remote or loopback HTTP queries to prevent timeout errors.
 	 */
 	public function activate() {
-		// Run initial audit to prime transient cache if not already set
-		if ( ! get_option( ZHS_Audit_Engine::OPTION_CACHE_KEY ) ) {
-			$this->audit_engine->run_audit( true );
+		// Initialize empty cache placeholder without making loopback HTTP requests
+		if ( false === get_option( ZHS_Audit_Engine::OPTION_CACHE_KEY ) ) {
+			update_option( ZHS_Audit_Engine::OPTION_CACHE_KEY, array(), false );
 		}
 	}
 

@@ -143,6 +143,73 @@ class ZHS_Audit_Engine {
 	}
 
 	/**
+	 * Retrieve cached audit results without performing any blocking HTTP calls.
+	 * Returns empty structure if no cache exists.
+	 *
+	 * @param string $target_url Page URL.
+	 * @param string $mode       Audit mode.
+	 * @return array Cached or empty audit structure.
+	 */
+	public function get_cached_audit( $target_url = '', $mode = 'single' ) {
+		$home_url      = home_url( '/' );
+		$target_url    = ! empty( $target_url ) ? esc_url_raw( $target_url ) : $home_url;
+		$is_front_page = ( trailingslashit( $target_url ) === trailingslashit( $home_url ) );
+		$cache_key     = self::OPTION_CACHE_KEY;
+		if ( ! $is_front_page ) {
+			$cache_key .= '_' . substr( md5( $target_url ), 0, 12 );
+		}
+
+		$cached = get_option( $cache_key );
+		if ( ! empty( $cached ) && is_array( $cached ) && ! empty( $cached['checks'] ) ) {
+			return $cached;
+		}
+
+		return $this->get_empty_audit_structure( $target_url );
+	}
+
+	/**
+	 * Return an empty audit result structure.
+	 *
+	 * @param string $target_url Page URL.
+	 * @return array Empty audit structure.
+	 */
+	public function get_empty_audit_structure( $target_url = '' ) {
+		$home_url   = home_url( '/' );
+		$target_url = ! empty( $target_url ) ? esc_url_raw( $target_url ) : $home_url;
+		$page_info  = $this->resolve_page_info( $target_url );
+
+		return array(
+			'site_url'            => $home_url,
+			'audit_mode'          => 'single',
+			'scope_label'         => $page_info['name'],
+			'scanned_pages_count' => 0,
+			'scanned_urls'        => array( $page_info['url'] ),
+			'page_name'           => $page_info['name'],
+			'page_url'            => $page_info['url'],
+			'status_code'         => 0,
+			'fetch_error'         => null,
+			'timestamp'           => 0,
+			'formatted_date'      => '',
+			'score'               => 0,
+			'grade'               => '—',
+			'grade_label'         => __( 'Pending Initial Audit', 'zhs-site-audit-seo-diagnostics' ),
+			'passed_count'        => 0,
+			'partial_count'       => 0,
+			'failed_count'        => 0,
+			'total_checks'        => 0,
+			'category_scores'     => array(
+				'usability'     => array( 'score' => 0, 'score_10' => '0.0', 'percentage' => 0 ),
+				'accessibility' => array( 'score' => 0, 'score_10' => '0.0', 'percentage' => 0 ),
+				'seo'           => array( 'score' => 0, 'score_10' => '0.0', 'percentage' => 0 ),
+				'geo_ai'        => array( 'score' => 0, 'score_10' => '0.0', 'percentage' => 0 ),
+			),
+			'checks'              => array(),
+			'scannable_pages'     => $this->get_scannable_pages(),
+			'empty'               => true,
+		);
+	}
+
+	/**
 	 * Run an audit scan on single or multiple pages or full website.
 	 *
 	 * @param bool         $force       Force fresh audit bypass cache.
@@ -377,15 +444,17 @@ class ZHS_Audit_Engine {
 		$xpath = null;
 		$dom   = null;
 
-		if ( ! empty( $html ) ) {
+		if ( ! empty( $html ) && extension_loaded( 'dom' ) && class_exists( 'DOMDocument' ) && class_exists( 'DOMXPath' ) ) {
 			$dom = new DOMDocument();
 			libxml_use_internal_errors( true );
 			if ( function_exists( 'mb_convert_encoding' ) ) {
 				$encoded_html = mb_convert_encoding( $html, 'HTML-ENTITIES', 'UTF-8' );
+			} elseif ( function_exists( 'wp_check_invalid_utf8' ) ) {
+				$encoded_html = wp_check_invalid_utf8( $html, true );
 			} else {
-				$encoded_html = htmlspecialchars_decode( utf8_decode( htmlentities( $html, ENT_COMPAT, 'utf-8', false ) ) );
+				$encoded_html = $html;
 			}
-			@$dom->loadHTML( $encoded_html, LIBXML_NOWARNING | LIBXML_NOERROR );
+			@$dom->loadHTML( '<?xml encoding="utf-8" ?>' . $encoded_html, LIBXML_NOWARNING | LIBXML_NOERROR );
 			libxml_clear_errors();
 			$xpath = new DOMXPath( $dom );
 		}
@@ -1570,7 +1639,7 @@ class ZHS_Audit_Engine {
 		foreach ( $h1_nodes as $h1 ) {
 			$txt = trim( $h1->textContent );
 			if ( ! empty( $txt ) ) {
-				$h1_samples[] = '"' . mb_substr( $txt, 0, 45 ) . '"';
+				$h1_samples[] = '"' . $this->safe_substr( $txt, 0, 45 ) . '"';
 			}
 		}
 
@@ -1710,7 +1779,7 @@ class ZHS_Audit_Engine {
 		}
 
 		$title      = trim( $title_nodes->item(0)->textContent );
-		$length     = mb_strlen( $title );
+		$length     = $this->safe_strlen( $title );
 		$is_generic = ( stripos( $title, 'Just another WordPress site' ) !== false );
 
 		if ( $is_generic ) {
@@ -1825,7 +1894,7 @@ class ZHS_Audit_Engine {
 		}
 
 		$desc   = trim( $meta_nodes->item(0)->getAttribute( 'content' ) );
-		$length = mb_strlen( $desc );
+		$length = $this->safe_strlen( $desc );
 
 		if ( $length >= 120 && $length <= 165 ) {
 			return array(
@@ -2106,32 +2175,38 @@ class ZHS_Audit_Engine {
 	 * Check 14: XML Sitemap Reachability.
 	 */
 	private function check_xml_sitemap() {
-		$home = home_url( '/' );
-		$sitemap_candidates = array(
-			$home . 'wp-sitemap.xml',
-			$home . 'sitemap_index.xml',
-			$home . 'sitemap.xml',
-		);
-
+		$home        = home_url( '/' );
 		$found_url   = null;
 		$status_code = null;
 
-		foreach ( $sitemap_candidates as $candidate ) {
-			$res = wp_remote_head( $candidate, array( 'timeout' => 8, 'sslverify' => false ) );
-			if ( ! is_wp_error( $res ) ) {
-				$code = wp_remote_retrieve_response_code( $res );
-				if ( $code === 200 ) {
-					$found_url   = $candidate;
-					$status_code = $code;
-					break;
-				}
+		// 1. Fast check: WordPress core sitemaps server active check (zero HTTP calls needed)
+		if ( function_exists( 'wp_sitemaps_get_server' ) ) {
+			$server = wp_sitemaps_get_server();
+			if ( $server && ! empty( $server->sitemaps ) ) {
+				$found_url   = $home . 'wp-sitemap.xml';
+				$status_code = 200;
 			}
 		}
 
-		// Fallback: check if WordPress core sitemaps are active
-		if ( ! $found_url && function_exists( 'wp_sitemaps_get_server' ) ) {
-			$found_url   = $home . 'wp-sitemap.xml';
-			$status_code = 200;
+		// 2. If not detected via core server, probe common candidate URLs with short timeout
+		if ( ! $found_url ) {
+			$sitemap_candidates = array(
+				$home . 'wp-sitemap.xml',
+				$home . 'sitemap_index.xml',
+				$home . 'sitemap.xml',
+			);
+
+			foreach ( $sitemap_candidates as $candidate ) {
+				$res = wp_remote_head( $candidate, array( 'timeout' => 3, 'sslverify' => false ) );
+				if ( ! is_wp_error( $res ) ) {
+					$code = wp_remote_retrieve_response_code( $res );
+					if ( $code === 200 ) {
+						$found_url   = $candidate;
+						$status_code = $code;
+						break;
+					}
+				}
+			}
 		}
 
 		if ( $found_url && $status_code === 200 ) {
@@ -2670,5 +2745,33 @@ class ZHS_Audit_Engine {
 			),
 			'recommendation' => __( 'Check server error logs or loopback connection settings.', 'zhs-site-audit-seo-diagnostics' ),
 		);
+	}
+
+	/**
+	 * Safe multibyte string length check with native fallback when mbstring is missing.
+	 *
+	 * @param string $str
+	 * @return int
+	 */
+	private function safe_strlen( $str ) {
+		if ( function_exists( 'mb_strlen' ) ) {
+			return mb_strlen( $str, 'UTF-8' );
+		}
+		return strlen( $str );
+	}
+
+	/**
+	 * Safe multibyte substring extraction with native fallback when mbstring is missing.
+	 *
+	 * @param string   $str
+	 * @param int      $start
+	 * @param int|null $length
+	 * @return string
+	 */
+	private function safe_substr( $str, $start, $length = null ) {
+		if ( function_exists( 'mb_substr' ) ) {
+			return null !== $length ? mb_substr( $str, $start, $length, 'UTF-8' ) : mb_substr( $str, $start );
+		}
+		return null !== $length ? substr( $str, $start, $length ) : substr( $str, $start );
 	}
 }

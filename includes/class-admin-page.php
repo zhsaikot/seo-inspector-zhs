@@ -90,8 +90,8 @@ class ZHS_Audit_Admin_Page {
 			true
 		);
 
-		// Preload initial audit state for front page (home) so the dashboard renders instantaneously without blocking page loads
-		$initial_audit = $this->engine->run_audit( false, home_url( '/' ), 'single' );
+		// Preload cached audit state for front page (home) without blocking admin page loads
+		$initial_audit = $this->engine->get_cached_audit( home_url( '/' ), 'single' );
 
 		wp_localize_script(
 			'zhs-audit-admin-js',

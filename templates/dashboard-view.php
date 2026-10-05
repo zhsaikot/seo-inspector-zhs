@@ -14,8 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Retrieve initial pre-calculated data (defaulting to single page / home page for rapid initial load)
-$initial_audit   = $this->engine->run_audit( false, home_url( '/' ), 'single' );
+// Retrieve cached audit data (non-blocking, fast initial page load)
+$initial_audit   = $this->engine->get_cached_audit( home_url( '/' ), 'single' );
 $overall_score   = $initial_audit['score'] ?? 0;
 $grade           = $initial_audit['grade'] ?? 'N/A';
 $grade_label     = $initial_audit['grade_label'] ?? '';

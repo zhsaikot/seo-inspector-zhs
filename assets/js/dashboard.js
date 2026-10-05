@@ -44,7 +44,7 @@
 		cacheElements();
 		bindEvents();
 
-		if (state.auditData) {
+		if (state.auditData && Array.isArray(state.auditData.checks) && state.auditData.checks.length > 0) {
 			renderDashboard(state.auditData, false);
 		} else {
 			triggerLiveAudit();
