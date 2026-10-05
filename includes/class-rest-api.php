@@ -42,7 +42,7 @@ class ZHS_Audit_Rest_API {
 	 * Register plugin REST routes.
 	 */
 	public function register_routes() {
-		// GET /seo-inspector/v1/audit - Retrieve latest cached audit
+		// GET /zhs-audit/v1/audit - Retrieve latest cached audit
 		register_rest_route(
 			self::REST_NAMESPACE,
 			'/audit',
@@ -53,7 +53,7 @@ class ZHS_Audit_Rest_API {
 			)
 		);
 
-		// POST /seo-inspector/v1/audit/run - Force live audit re-check
+		// POST /zhs-audit/v1/audit/run - Force live audit re-check
 		register_rest_route(
 			self::REST_NAMESPACE,
 			'/audit/run',
@@ -64,7 +64,7 @@ class ZHS_Audit_Rest_API {
 			)
 		);
 
-		// POST /seo-inspector/v1/audit/clear - Clear cached audit
+		// POST /zhs-audit/v1/audit/clear - Clear cached audit
 		register_rest_route(
 			self::REST_NAMESPACE,
 			'/audit/clear',

@@ -88,7 +88,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 					<span class="si-multiselect-label" id="si-multiselect-label">
 						<?php echo esc_html( $scope_label ); ?>
 					</span>
-					<span class="si-multiselect-badge" id="si-multiselect-badge"><?php echo ( $audit_mode === 'full_site' ) ? 'All' : ( ( $audit_mode === 'single' ) ? '1' : count( $initial_audit['scanned_urls'] ?? array( 1 ) ) ); ?></span>
+					<span class="si-multiselect-badge" id="si-multiselect-badge"><?php echo esc_html( ( $audit_mode === 'full_site' ) ? 'All' : ( ( $audit_mode === 'single' ) ? '1' : (string) count( $initial_audit['scanned_urls'] ?? array( 1 ) ) ) ); ?></span>
 					<svg class="si-ms-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
 				</button>
 
@@ -147,7 +147,18 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 
 					<div class="si-ms-footer">
 						<div class="si-ms-status-summary">
-							<span id="si-ms-selected-summary"><?php echo ( $audit_mode === 'full_site' ) ? esc_html__( 'Full website selected', 'zhs-site-audit-seo-diagnostics' ) : ( ( $audit_mode === 'single' ) ? esc_html__( '1 page selected', 'zhs-site-audit-seo-diagnostics' ) : sprintf( esc_html__( '%d pages selected', 'zhs-site-audit-seo-diagnostics' ), count( $initial_audit['scanned_urls'] ?? array( 1 ) ) ) ); ?></span>
+							<?php
+							$selected_count = count( $initial_audit['scanned_urls'] ?? array( 1 ) );
+							if ( 'full_site' === $audit_mode ) {
+								$selected_summary = esc_html__( 'Full website selected', 'zhs-site-audit-seo-diagnostics' );
+							} elseif ( 'single' === $audit_mode ) {
+								$selected_summary = esc_html__( '1 page selected', 'zhs-site-audit-seo-diagnostics' );
+							} else {
+								/* translators: %d: Number of selected pages */
+								$selected_summary = sprintf( esc_html__( '%d pages selected', 'zhs-site-audit-seo-diagnostics' ), $selected_count );
+							}
+							?>
+							<span id="si-ms-selected-summary"><?php echo esc_html( $selected_summary ); ?></span>
 						</div>
 						<div class="si-ms-footer-btns">
 							<button type="button" class="si-btn si-btn-primary si-btn-sm" id="si-btn-run-ms-audit">
@@ -447,7 +458,12 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 									<div class="si-affected-header">
 										<span class="si-affected-badge">
 											<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-											<strong><?php printf( esc_html__( 'Affected Pages (%1$d of %2$d scanned):', 'zhs-site-audit-seo-diagnostics' ), count( $affected_pages ), $total_scanned ); ?></strong>
+											<strong>
+												<?php
+												/* translators: 1: Number of affected pages, 2: Total number of scanned pages */
+												printf( esc_html__( 'Affected Pages (%1$d of %2$d scanned):', 'zhs-site-audit-seo-diagnostics' ), count( $affected_pages ), $total_scanned );
+												?>
+											</strong>
 										</span>
 									</div>
 									<div class="si-affected-list">
@@ -475,7 +491,12 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 								<!-- All Scanned Pages Passed -->
 								<div class="si-passed-scope-chip">
 									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-									<span><?php printf( esc_html__( 'Passed across all %d audited pages on your website.', 'zhs-site-audit-seo-diagnostics' ), $total_scanned ); ?></span>
+									<span>
+										<?php
+										/* translators: %d: Total number of audited pages */
+										printf( esc_html__( 'Passed across all %d audited pages on your website.', 'zhs-site-audit-seo-diagnostics' ), $total_scanned );
+										?>
+									</span>
 								</div>
 							<?php else : ?>
 								<!-- Single Page Location Chip -->
@@ -501,7 +522,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 										<?php esc_html_e( 'Detected Findings &amp; Evidence', 'zhs-site-audit-seo-diagnostics' ); ?>
 									</div>
 									<div class="si-detail-content">
-										<p class="si-findings-text"><?php echo nl2br( esc_html( $details ) ); ?></p>
+										<p class="si-findings-text"><?php echo wp_kses( nl2br( esc_html( $details ) ), array( 'br' => array() ) ); ?></p>
 									</div>
 								</div>
 
@@ -512,7 +533,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 										<?php esc_html_e( 'Actionable Recommendation', 'zhs-site-audit-seo-diagnostics' ); ?>
 									</div>
 									<div class="si-detail-content">
-										<p class="si-rec-text"><?php echo nl2br( esc_html( $rec ) ); ?></p>
+										<p class="si-rec-text"><?php echo wp_kses( nl2br( esc_html( $rec ) ), array( 'br' => array() ) ); ?></p>
 									</div>
 								</div>
 							</div>

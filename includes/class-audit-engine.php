@@ -362,11 +362,13 @@ class ZHS_Audit_Engine {
 		// Resolve cache key
 		if ( $mode === 'full_site' ) {
 			$cache_key   = self::OPTION_CACHE_KEY . '_full_site';
+			/* translators: %d: Total number of scanned pages */
 			$scope_label = sprintf( __( 'Full Website Audit (%d Pages)', 'zhs-site-audit-seo-diagnostics' ), count( $clean_urls ) );
 		} else {
 			$sorted_urls = $clean_urls;
 			sort( $sorted_urls );
 			$cache_key   = self::OPTION_CACHE_KEY . '_multi_' . substr( md5( implode( '|', $sorted_urls ) ), 0, 12 );
+			/* translators: %d: Total number of scanned pages */
 			$scope_label = sprintf( __( 'Multi-Page Audit (%d Pages)', 'zhs-site-audit-seo-diagnostics' ), count( $clean_urls ) );
 		}
 
@@ -562,13 +564,17 @@ class ZHS_Audit_Engine {
 			if ( $affected_count === 0 ) {
 				$agg_status  = 'pass';
 				$agg_score   = 1.0;
+				/* translators: %d: Total number of audited pages */
 				$agg_summary = sprintf( __( 'Passed across all %d audited pages.', 'zhs-site-audit-seo-diagnostics' ), $total_pages );
+				/* translators: %1$d: Total number of audited pages */
 				$agg_details = sprintf( __( "Audited Scope: %1\$d pages scanned.\n\nAll %1\$d pages fully comply with SEO guidelines.", 'zhs-site-audit-seo-diagnostics' ), $total_pages );
 			} elseif ( $affected_count === $total_pages ) {
 				$agg_status  = 'fail';
 				$agg_score   = 0.0;
+				/* translators: %d: Total number of audited pages */
 				$agg_summary = sprintf( __( 'Issues detected on all %d audited pages.', 'zhs-site-audit-seo-diagnostics' ), $total_pages );
 				$agg_details = sprintf(
+					/* translators: 1: Total number of audited pages, 2: Affected pages breakdown */
 					__( "Audited Scope: %1\$d pages scanned (All %1\$d pages require attention).\n\nAffected Pages Breakdown:\n%2\$s", 'zhs-site-audit-seo-diagnostics' ),
 					$total_pages,
 					implode( "\n\n", $findings_lines )
@@ -576,8 +582,10 @@ class ZHS_Audit_Engine {
 			} else {
 				$agg_status  = 'partial';
 				$agg_score   = 0.5;
+				/* translators: 1: Number of affected pages, 2: Total number of audited pages, 3: Number of passed pages */
 				$agg_summary = sprintf( __( 'Issues detected on %1$d of %2$d audited pages (%3$d pages passed).', 'zhs-site-audit-seo-diagnostics' ), $affected_count, $total_pages, $passed_count );
 				$agg_details = sprintf(
+					/* translators: 1: Total audited pages, 2: Affected pages count, 3: Passed pages count, 4: Affected pages breakdown */
 					__( "Audited Scope: %1\$d pages scanned (%2\$d affected, %3\$d passed).\n\nAffected Pages Breakdown:\n%4\$s", 'zhs-site-audit-seo-diagnostics' ),
 					$total_pages,
 					$affected_count,
@@ -594,6 +602,7 @@ class ZHS_Audit_Engine {
 				'status'              => $agg_status,
 				'score'               => $agg_score,
 				'impact'              => $first_check['impact'],
+				/* translators: %d: Total number of scanned pages */
 				'page_name'           => ( $mode === 'full_site' ) ? __( 'Full Website Audit', 'zhs-site-audit-seo-diagnostics' ) : sprintf( __( 'Multi-Page Audit (%d pages)', 'zhs-site-audit-seo-diagnostics' ), $total_pages ),
 				'page_url'            => home_url( '/' ),
 				'summary'             => $agg_summary,
@@ -637,6 +646,7 @@ class ZHS_Audit_Engine {
 				'html'        => $synthetic_html,
 				'headers'     => array(),
 				'status_code' => 0,
+				/* translators: %s: HTTP error message */
 				'error'       => sprintf( __( 'Loopback HTTP request failed: %s. Using internal template diagnostics.', 'zhs-site-audit-seo-diagnostics' ), $error_message ),
 			);
 		}
@@ -702,6 +712,7 @@ class ZHS_Audit_Engine {
 			$score   = 1.0;
 			$summary = __( 'Page is securely delivered over HTTPS with active SSL.', 'zhs-site-audit-seo-diagnostics' );
 			$details = sprintf(
+				/* translators: 1: Page name, 2: Page URL, 3: HSTS status description */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nProtocol: HTTPS. %3\$s", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url,
@@ -713,6 +724,7 @@ class ZHS_Audit_Engine {
 			$score   = 0.5;
 			$summary = __( 'HTTPS configured, but SSL verification may have mixed content or missing redirects.', 'zhs-site-audit-seo-diagnostics' );
 			$details = sprintf(
+				/* translators: 1: Page name, 2: Page URL */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nEnsure all HTTP traffic enforces 301 redirects to HTTPS.", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url
@@ -723,6 +735,7 @@ class ZHS_Audit_Engine {
 			$score   = 0.0;
 			$summary = __( 'Insecure HTTP protocol detected! Search engines penalize non-HTTPS websites.', 'zhs-site-audit-seo-diagnostics' );
 			$details = sprintf(
+				/* translators: 1: Page name, 2: Page URL */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nPage is currently served over insecure HTTP.", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url
@@ -769,6 +782,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'Missing <meta name="viewport"> tag! Mobile browsers will render desktop scale.', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nNo viewport tag was located in the document <head>. This hurts mobile UX and fails Google Mobile-First Indexing standards.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url
@@ -794,6 +808,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'Responsive mobile viewport meta tag correctly configured.', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3 */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nDetected: <meta name=\"viewport\" content=\"%3\$s\">. User zooming is preserved.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -816,6 +831,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'Viewport found, but user zooming is disabled (violates WCAG accessibility).', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3 */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nDetected: content=\"%3\$s\". Properties like user-scalable=no or maximum-scale=1 prevent visually impaired users from zooming.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -837,6 +853,7 @@ class ZHS_Audit_Engine {
 			'page_url'       => $this->current_page_url,
 			'summary'        => __( 'Viewport meta tag is non-standard or missing width=device-width.', 'zhs-site-audit-seo-diagnostics' ),
 			'details'        => sprintf(
+				/* translators: 1: Page name, 2: Page URL, 3: Viewport content attribute */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nDetected content: \"%3\$s\".", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url,
@@ -880,6 +897,7 @@ class ZHS_Audit_Engine {
 		$channels_found = array();
 		if ( $has_tel ) $channels_found[] = __( 'Phone (tel: link)', 'zhs-site-audit-seo-diagnostics' );
 		if ( $has_mailto ) $channels_found[] = __( 'Email (mailto: link)', 'zhs-site-audit-seo-diagnostics' );
+		/* translators: %s: Comma-separated list of social platform names */
 		if ( ! empty( $found_socials ) ) $channels_found[] = sprintf( __( 'Social Profiles (%s)', 'zhs-site-audit-seo-diagnostics' ), implode( ', ', array_map( 'ucfirst', array_slice( $found_socials, 0, 3 ) ) ) );
 		if ( $has_form ) $channels_found[] = __( 'Contact Form Block', 'zhs-site-audit-seo-diagnostics' );
 
@@ -888,6 +906,7 @@ class ZHS_Audit_Engine {
 		$contact_page_str = '';
 		if ( $contact_page && $contact_page->post_status === 'publish' ) {
 			$contact_page_str = "
+/* translators: 1: Contact page title, 2: Contact page URL */
 " . sprintf( __( 'Dedicated Contact Page found on site: "%1$s" (URL: %2$s)', 'zhs-site-audit-seo-diagnostics' ), get_the_title( $contact_page->ID ), get_permalink( $contact_page->ID ) );
 		}
 
@@ -896,11 +915,13 @@ class ZHS_Audit_Engine {
 		if ( $count >= 3 ) {
 			$status  = 'pass';
 			$score   = 1.0;
+			/* translators: %d: Number of detected communication channels */
 			$summary = sprintf( __( 'Excellent contact accessibility (%d communication channels discovered).', 'zhs-site-audit-seo-diagnostics' ), $count );
 			$rec     = __( 'Great job providing diverse touchpoints for customers and search engine trust signals.', 'zhs-site-audit-seo-diagnostics' );
 		} elseif ( $count >= 1 ) {
 			$status  = 'partial';
 			$score   = 0.5;
+			/* translators: %d: Number of detected communication channels */
 			$summary = sprintf( __( 'Basic contact channel detected (%d channels found), but could be improved.', 'zhs-site-audit-seo-diagnostics' ), $count );
 			$rec     = __( 'Add direct clickable phone (tel:) links, an interactive inquiry form, or active social media links.', 'zhs-site-audit-seo-diagnostics' );
 		} else {
@@ -911,9 +932,11 @@ class ZHS_Audit_Engine {
 		}
 
 		$details = sprintf(
+			/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4 */
 			__( "Page: \"%1\$s\"\nURL: %2\$s\n%3\$s%4\$s", 'zhs-site-audit-seo-diagnostics' ),
 			$this->current_page_name,
 			$this->current_page_url,
+			/* translators: %s: Comma-separated list of active communication channels */
 			! empty( $channels_found ) ? sprintf( __( 'Active channels on this page: %s', 'zhs-site-audit-seo-diagnostics' ), implode( ' • ', $channels_found ) ) : __( 'No direct communication channels detected on this page.', 'zhs-site-audit-seo-diagnostics' ),
 			$contact_page_str
 		);
@@ -975,6 +998,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'No intrusive entry popups or blocking overlays detected on initial load.', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nClean viewport allows visitors to access primary content immediately without intrusive interstitials.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url
@@ -996,6 +1020,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'Popup or modal overlay containers detected on page.', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Detected popup container classes */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nDetected popup hooks/containers: %3\$s. An accessible dismiss mechanism was found.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -1017,6 +1042,7 @@ class ZHS_Audit_Engine {
 			'page_url'       => $this->current_page_url,
 			'summary'        => __( 'Potential intrusive interstitial detected without clear accessible dismissal.', 'zhs-site-audit-seo-diagnostics' ),
 			'details'        => sprintf(
+				/* translators: 1: Page name, 2: Page URL, 3: Detected popup classes */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nMultiple popup classes identified: %3\$s.", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url,
@@ -1071,6 +1097,7 @@ class ZHS_Audit_Engine {
 		}
 
 		$privacy_evidence = $has_privacy
+			/* translators: 1: Privacy policy page title, 2: Privacy policy URL */
 			? sprintf( __( 'Privacy Policy detected ("%1$s" - URL: %2$s).', 'zhs-site-audit-seo-diagnostics' ), $privacy_title, $privacy_url ?: __( 'Linked in footer', 'zhs-site-audit-seo-diagnostics' ) )
 			: __( 'No active Privacy Policy page linked in footer.', 'zhs-site-audit-seo-diagnostics' );
 
@@ -1087,6 +1114,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'Footer contains valid legal trust links without broken "#" placeholders.', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4 */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\n%3\$s Inspected %4\$d footer links; zero dead hash \"#\" anchors found.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -1108,8 +1136,10 @@ class ZHS_Audit_Engine {
 				'impact'         => 'medium',
 				'page_name'      => $this->current_page_name,
 				'page_url'       => $this->current_page_url,
+				/* translators: %d: Number of dead dummy hash links */
 				'summary'        => sprintf( __( 'Privacy link present, but %d dead dummy "#" link(s) found in footer.', 'zhs-site-audit-seo-diagnostics' ), $dead_links ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Privacy evidence, 4: Dead dummy hash links count */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\n%3\$s Found %4\$d links pointing to empty \"#\". This signals unfinished web design to search engine crawlers.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -1132,6 +1162,7 @@ class ZHS_Audit_Engine {
 			'page_url'       => $this->current_page_url,
 			'summary'        => __( 'Missing explicit Privacy Policy or Terms of Service links in footer.', 'zhs-site-audit-seo-diagnostics' ),
 			'details'        => sprintf(
+				/* translators: 1: Page name, 2: Page URL */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nSearch engine quality raters and ad networks require explicit privacy and compliance links in global site footers.", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url
@@ -1167,6 +1198,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'No skip-to-content link found at top of page (WCAG 2.4.1 Bypass Blocks).', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nKeyboard and screen reader users must navigate through the entire header on this page without a skip link.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url
@@ -1199,6 +1231,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'Skip-to-content link exists and connects to a valid anchor ID.', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Skip link text, 4: Target HTML ID attribute */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nFound skip link \"%3\$s\" targeting matching element with id=\"%4\$s\".", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -1221,12 +1254,14 @@ class ZHS_Audit_Engine {
 			'page_url'       => $this->current_page_url,
 			'summary'        => __( 'Skip link exists, but target anchor ID does not exist in DOM.', 'zhs-site-audit-seo-diagnostics' ),
 			'details'        => sprintf(
+				/* translators: 1: Page name, 2: Page URL, 3: Target href ID, 4: Missing element ID */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nSkip link points to \"#%3\$s\", but no HTML element possesses id=\"%4\$s\".", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url,
 				esc_attr( $target_id ),
 				esc_attr( $target_id )
 			),
+			/* translators: %s: Expected main content wrapper ID */
 			'recommendation' => sprintf( __( 'Add id="%s" to your main content <main> wrapper in your theme.', 'zhs-site-audit-seo-diagnostics' ), esc_attr( $target_id ) ),
 		);
 	}
@@ -1255,6 +1290,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'No inline <img> tags detected on this page.', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nNo image accessibility issues detected on this page.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url
@@ -1313,8 +1349,10 @@ class ZHS_Audit_Engine {
 		if ( ! empty( $flagged_images ) ) {
 			$sample = array_slice( $flagged_images, 0, 5 );
 			$flagged_details = "
+/* translators: %s: Comma-separated list of flagged image sources */
 " . sprintf( __( 'Flagged image elements on this page: %s', 'zhs-site-audit-seo-diagnostics' ), implode( ', ', $sample ) );
 			if ( count( $flagged_images ) > 5 ) {
+				/* translators: %d: Number of additional flagged images */
 				$flagged_details .= sprintf( __( ' (+%d more)', 'zhs-site-audit-seo-diagnostics' ), count( $flagged_images ) - 5 );
 			}
 		}
@@ -1343,6 +1381,7 @@ class ZHS_Audit_Engine {
 			}
 			if ( ! empty( $db_items ) ) {
 				$db_cross_check = "
+/* translators: %s: List of other pages with uncaptioned images */
 " . sprintf( __( 'Other pages with uncaptioned Media Library images: %s', 'zhs-site-audit-seo-diagnostics' ), implode( '; ', $db_items ) );
 			}
 		}
@@ -1360,8 +1399,10 @@ class ZHS_Audit_Engine {
 				'impact'         => 'high',
 				'page_name'      => $this->current_page_name,
 				'page_url'       => $this->current_page_url,
+				/* translators: %d: Total number of inspected images */
 				'summary'        => sprintf( __( 'All %d images on this page have proper alt attributes.', 'zhs-site-audit-seo-diagnostics' ), $total_imgs ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4 */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nInspected %3\$d images on this page. 0 missing alt tags; 0 junk placeholders found.%4\$s", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -1383,8 +1424,10 @@ class ZHS_Audit_Engine {
 				'impact'         => 'high',
 				'page_name'      => $this->current_page_name,
 				'page_url'       => $this->current_page_url,
+				/* translators: 1: Number of images missing alt text, 2: Total number of images */
 				'summary'        => sprintf( __( '%d of %d images missing alt text or have generic file names.', 'zhs-site-audit-seo-diagnostics' ), ( $missing_alt + $junk_alt ), $total_imgs ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4, 5: Diagnostic detail value 5, 6: Diagnostic detail value 6 */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nFound %3\$d missing alt tags, %4\$d generic/file-name alts on this page.%5\$s%6\$s", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -1407,8 +1450,10 @@ class ZHS_Audit_Engine {
 			'impact'         => 'high',
 			'page_name'      => $this->current_page_name,
 			'page_url'       => $this->current_page_url,
+			/* translators: 1: Number of missing alt images, 2: Total number of images */
 			'summary'        => sprintf( __( 'Significant image accessibility issues: %d missing alt tags out of %d images on this page.', 'zhs-site-audit-seo-diagnostics' ), $missing_alt, $total_imgs ),
 			'details'        => sprintf(
+				/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4, 5: Diagnostic detail value 5, 6: Diagnostic detail value 6 */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nOver 30%% of images lack alt attributes (%3\$d missing, %4\$d junk).%5\$s%6\$s", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url,
@@ -1445,6 +1490,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'No input form controls on this page to evaluate.', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nNo forms detected requiring explicit label pairing.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url
@@ -1499,6 +1545,7 @@ class ZHS_Audit_Engine {
 		if ( ! empty( $flagged_inputs ) ) {
 			$sample = array_slice( $flagged_inputs, 0, 4 );
 			$flagged_text = "
+/* translators: %s: Comma-separated list of flagged form field names */
 " . sprintf( __( 'Flagged fields: %s', 'zhs-site-audit-seo-diagnostics' ), implode( ', ', $sample ) );
 		}
 
@@ -1513,8 +1560,10 @@ class ZHS_Audit_Engine {
 				'impact'         => 'high',
 				'page_name'      => $this->current_page_name,
 				'page_url'       => $this->current_page_url,
+				/* translators: %d: Total number of form inputs */
 				'summary'        => sprintf( __( 'All %d form inputs on this page have explicit accessible labels.', 'zhs-site-audit-seo-diagnostics' ), $total_inputs ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3 */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nInspected %3\$d interactive fields on this page; 100%% have associated <label> or aria-label attributes.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -1535,8 +1584,10 @@ class ZHS_Audit_Engine {
 				'impact'         => 'medium',
 				'page_name'      => $this->current_page_name,
 				'page_url'       => $this->current_page_url,
+				/* translators: %d: Number of placeholder-only form fields */
 				'summary'        => sprintf( __( '%d form fields on this page rely solely on placeholders instead of proper labels.', 'zhs-site-audit-seo-diagnostics' ), $placeholder_only ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Flagged placeholder fields */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nPlaceholders disappear upon typing and are not reliably announced by assistive screen readers.%3\$s", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -1556,8 +1607,10 @@ class ZHS_Audit_Engine {
 			'impact'         => 'high',
 			'page_name'      => $this->current_page_name,
 			'page_url'       => $this->current_page_url,
+			/* translators: %d: Number of completely unlabeled form inputs */
 			'summary'        => sprintf( __( '%d form inputs completely lack labels and accessible descriptions on this page.', 'zhs-site-audit-seo-diagnostics' ), ( $unlabeled_count + $placeholder_only ) ),
 			'details'        => sprintf(
+				/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4 */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nDetected %3\$d fields without any label or aria-label attribute on this page.%4\$s", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url,
@@ -1625,6 +1678,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'Flawless heading hierarchy: Exactly one H1 and sequential progression.', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4, 5: Diagnostic detail value 5 */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nH1: %3\$s. Total headings: %4\$d (%5\$s). No skipped levels or empty headings on this page.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -1638,8 +1692,11 @@ class ZHS_Audit_Engine {
 
 		if ( $h1_count > 1 || ! empty( $irregular_jumps ) ) {
 			$issues = array();
+			/* translators: 1: Number of H1 tags detected, 2: Sample H1 heading texts */
 			if ( $h1_count > 1 ) $issues[] = sprintf( __( '%d H1 tags detected: %s (recommended: exactly 1)', 'zhs-site-audit-seo-diagnostics' ), $h1_count, $h1_evidence );
+			/* translators: %s: Comma-separated list of skipped heading levels */
 			if ( ! empty( $irregular_jumps ) ) $issues[] = sprintf( __( 'Skipped heading levels: %s', 'zhs-site-audit-seo-diagnostics' ), implode( ', ', array_unique( $irregular_jumps ) ) );
+			/* translators: %d: Number of empty heading tags found */
 			if ( $empty_headings > 0 ) $issues[] = sprintf( __( '%d empty heading tag(s)', 'zhs-site-audit-seo-diagnostics' ), $empty_headings );
 
 			return array(
@@ -1652,8 +1709,10 @@ class ZHS_Audit_Engine {
 				'impact'         => 'medium',
 				'page_name'      => $this->current_page_name,
 				'page_url'       => $this->current_page_url,
+				/* translators: %d: Number of H1 tags detected */
 				'summary'        => sprintf( __( 'Heading order needs optimization on this page (%d H1 tags or skipped levels).', 'zhs-site-audit-seo-diagnostics' ), $h1_count ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4 */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nIssues found: %3\$s.\nHeadings outline: %4\$s.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -1676,6 +1735,7 @@ class ZHS_Audit_Engine {
 			'page_url'       => $this->current_page_url,
 			'summary'        => __( 'Missing <h1> tag entirely! Page lacks a primary topic heading.', 'zhs-site-audit-seo-diagnostics' ),
 			'details'        => sprintf(
+				/* translators: 1: Page name, 2: Page URL */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nA single H1 heading is vital for search engine topic comprehension and screen reader document navigation.", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url
@@ -1711,6 +1771,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'Missing <title> tag! This is a critical SEO penalty.', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nNo <title> element was found in the document head for this page.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url
@@ -1736,6 +1797,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'Default "Just another WordPress site" detected in title tag!', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Current title text, 4: Title character length */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nCurrent Title: \"%3\$s\" (%4\$d characters).", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -1757,8 +1819,10 @@ class ZHS_Audit_Engine {
 				'impact'         => 'high',
 				'page_name'      => $this->current_page_name,
 				'page_url'       => $this->current_page_url,
+				/* translators: %d: Title tag character count */
 				'summary'        => sprintf( __( 'Optimal title tag length (%d characters).', 'zhs-site-audit-seo-diagnostics' ), $length ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4 */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nTitle: \"%3\$s\" (%4\$d chars). Falls into optimal SERP display window (50-60 chars).", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -1770,7 +1834,9 @@ class ZHS_Audit_Engine {
 		}
 
 		$summary = ( $length < 45 )
+			/* translators: %d: Title tag character count */
 			? sprintf( __( 'Title is too short (%d characters). Optimal: 50-60 characters.', 'zhs-site-audit-seo-diagnostics' ), $length )
+			/* translators: %d: Title tag character count */
 			: sprintf( __( 'Title is too long (%d characters). It will be truncated in Google search results.', 'zhs-site-audit-seo-diagnostics' ), $length );
 
 		return array(
@@ -1785,6 +1851,7 @@ class ZHS_Audit_Engine {
 			'page_url'       => $this->current_page_url,
 			'summary'        => $summary,
 			'details'        => sprintf(
+				/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4 */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nTitle: \"%3\$s\" (%4\$d chars). Target range: 45 to 65 characters.", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url,
@@ -1818,6 +1885,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'Missing meta description on this page! Search engines will generate automated snippets.', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nNo <meta name=\"description\"> tag was discovered in the document head for this page.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url
@@ -1840,8 +1908,10 @@ class ZHS_Audit_Engine {
 				'impact'         => 'high',
 				'page_name'      => $this->current_page_name,
 				'page_url'       => $this->current_page_url,
+				/* translators: %d: Meta description character count */
 				'summary'        => sprintf( __( 'Optimal meta description length (%d characters).', 'zhs-site-audit-seo-diagnostics' ), $length ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4 */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nContent: \"%3\$s\" (%4\$d chars). Displays cleanly across desktop and mobile SERPs.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -1853,7 +1923,9 @@ class ZHS_Audit_Engine {
 		}
 
 		$summary = ( $length < 120 )
+			/* translators: %d: Meta description character count */
 			? sprintf( __( 'Meta description is short (%d characters). Recommended: 140-160 characters.', 'zhs-site-audit-seo-diagnostics' ), $length )
+			/* translators: %d: Meta description character count */
 			: sprintf( __( 'Meta description is too long (%d characters) and risks truncation on mobile devices.', 'zhs-site-audit-seo-diagnostics' ), $length );
 
 		return array(
@@ -1868,6 +1940,7 @@ class ZHS_Audit_Engine {
 			'page_url'       => $this->current_page_url,
 			'summary'        => $summary,
 			'details'        => sprintf(
+				/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4 */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nContent: \"%3\$s\" (%4\$d chars). Ideal length is 140 to 160 characters.", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url,
@@ -1897,6 +1970,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'CRITICAL: Site is blocking search engines (Search Engine Visibility is disabled)!', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nWordPress option blog_public is 0. \"Discourage search engines from indexing this site\" is enabled.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url
@@ -1937,6 +2011,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( '<meta name="robots" content="noindex"> tag is instructing crawlers not to index this page!', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Robots meta content */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nA \"noindex\" directive was found in the meta robots tag: \"%3\$s\".", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -1959,6 +2034,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'Canonical URL is active and search engine indexing is permitted.', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Canonical link URL */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nCanonical link: <link rel=\"canonical\" href=\"%3\$s\">. Robots allows indexing.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -1980,6 +2056,7 @@ class ZHS_Audit_Engine {
 			'page_url'       => $this->current_page_url,
 			'summary'        => __( 'Page is indexable, but missing self-referencing canonical <link> tag.', 'zhs-site-audit-seo-diagnostics' ),
 			'details'        => sprintf(
+				/* translators: 1: Page name, 2: Page URL */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nWithout a canonical link, tracking parameters (?utm_source=) can cause duplicate content issues.", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url
@@ -2030,6 +2107,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'Complete social sharing tags configured (OG Title, Desc, Image & Twitter Card).', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Open Graph image URL, 4: Twitter card type */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nOG Image: %3\$s. Twitter card: %4\$s. Previews will display rich media on LinkedIn, Facebook, and X.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -2055,8 +2133,10 @@ class ZHS_Audit_Engine {
 				'impact'         => 'medium',
 				'page_name'      => $this->current_page_name,
 				'page_url'       => $this->current_page_url,
+				/* translators: %s: Comma-separated list of missing social meta tags */
 				'summary'        => sprintf( __( 'Partial social metadata on this page. Missing: %s.', 'zhs-site-audit-seo-diagnostics' ), implode( ', ', $missing ) ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3 */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nFound %3\$d of 6 recommended social tags. Missing high-res social thumbnail image hurts click rates.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -2078,6 +2158,7 @@ class ZHS_Audit_Engine {
 			'page_url'       => $this->current_page_url,
 			'summary'        => __( 'No Open Graph or Twitter Card tags found on this page.', 'zhs-site-audit-seo-diagnostics' ),
 			'details'        => sprintf(
+				/* translators: 1: Page name, 2: Page URL */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nLinks shared on social media will appear unformatted without rich imagery or tailored summaries.", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url
@@ -2137,6 +2218,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $found_url,
 				'summary'        => __( 'Active and reachable XML sitemap discovered.', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Sitemap index URL, 2: HTTP status code */
 					__( "Sitemap Index URL: %1\$s\nStatus: HTTP %2\$s OK. XML structure is reachable by search crawlers.", 'zhs-site-audit-seo-diagnostics' ),
 					esc_url( $found_url ),
 					$status_code
@@ -2157,6 +2239,7 @@ class ZHS_Audit_Engine {
 			'page_url'       => $home . 'wp-sitemap.xml',
 			'summary'        => __( 'No active XML sitemap detected at standard endpoints (/wp-sitemap.xml or /sitemap_index.xml).', 'zhs-site-audit-seo-diagnostics' ),
 			'details'        => sprintf(
+				/* translators: %1$s: Tested website home URL */
 				__( 'Tested standard paths on site (%1$s): /wp-sitemap.xml, /sitemap_index.xml, /sitemap.xml. None returned HTTP 200.', 'zhs-site-audit-seo-diagnostics' ),
 				$home
 			),
@@ -2188,6 +2271,7 @@ class ZHS_Audit_Engine {
 			}
 		}
 		$sample_list_str = ! empty( $sample_pages ) ? "
+/* translators: %s: Semicolon-separated list of sample published pages */
 " . sprintf( __( 'Sample published pages in database: %s', 'zhs-site-audit-seo-diagnostics' ), implode( '; ', $sample_pages ) ) : '';
 
 		// Calculate clean word count from front-end body
@@ -2212,8 +2296,10 @@ class ZHS_Audit_Engine {
 				'impact'         => 'high',
 				'page_name'      => $this->current_page_name,
 				'page_url'       => $this->current_page_url,
+				/* translators: 1: Word count on this page, 2: Total published pages and posts count */
 				'summary'        => sprintf( __( 'Substantial content depth: %d words on this page across %d published pages.', 'zhs-site-audit-seo-diagnostics' ), $word_count, $total_published ),
 				'details'        => sprintf(
+					/* translators: 1: Audited page name, 2: Audited page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4, 5: Diagnostic detail value 5, 6: Diagnostic detail value 6, 7: Diagnostic detail value 7 */
 					__( "Audited Page: \"%1\$s\"\nURL: %2\$s\nWord count on this page: %3\$d words. Site catalog: %4\$d published items (%5\$d posts, %6\$d pages).%7\$s", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -2238,8 +2324,10 @@ class ZHS_Audit_Engine {
 				'impact'         => 'medium',
 				'page_name'      => $this->current_page_name,
 				'page_url'       => $this->current_page_url,
+				/* translators: 1: Word count on this page, 2: Total published pages and posts count */
 				'summary'        => sprintf( __( 'Thin content risk: %d words on this page with %d total published posts/pages.', 'zhs-site-audit-seo-diagnostics' ), $word_count, $total_published ),
 				'details'        => sprintf(
+					/* translators: 1: Audited page name, 2: Audited page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4 */
 					__( "Audited Page: \"%1\$s\"\nURL: %2\$s\nWord count: %3\$d words. Search engines favor comprehensive topic coverage (minimum 350-500 words for primary landing pages).%4\$s", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -2260,8 +2348,10 @@ class ZHS_Audit_Engine {
 			'impact'         => 'high',
 			'page_name'      => $this->current_page_name,
 			'page_url'       => $this->current_page_url,
+			/* translators: %d: Word count on this page */
 			'summary'        => sprintf( __( 'Critically thin or empty content (%d words detected).', 'zhs-site-audit-seo-diagnostics' ), $word_count ),
 			'details'        => sprintf(
+				/* translators: 1: Audited page name, 2: Audited page URL, 3: Sample pages list */
 				__( "Audited Page: \"%1\$s\"\nURL: %2\$s\nSearch engines may classify pages with under 150 words as thin or low-value content.%3\$s", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url,
@@ -2299,6 +2389,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'No JSON-LD structured data detected! AI engines cannot parse entity knowledge graph.', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nZero <script type=\"application/ld+json\"> blocks were found in the page markup.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url
@@ -2340,8 +2431,10 @@ class ZHS_Audit_Engine {
 				'impact'         => 'high',
 				'page_name'      => $this->current_page_name,
 				'page_url'       => $this->current_page_url,
+				/* translators: %s: Comma-separated list of detected Schema.org types */
 				'summary'        => sprintf( __( 'Rich entity Schema.org detected: %s with sameAs social profiles.', 'zhs-site-audit-seo-diagnostics' ), implode( ', ', $types_list ) ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4 */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nFound %3\$d JSON-LD block(s). Types: %4\$s. sameAs entity links confirmed.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -2363,8 +2456,10 @@ class ZHS_Audit_Engine {
 				'impact'         => 'high',
 				'page_name'      => $this->current_page_name,
 				'page_url'       => $this->current_page_url,
+				/* translators: %s: Comma-separated list of detected Schema.org types */
 				'summary'        => sprintf( __( 'Basic Schema detected (%s), but missing sameAs entity reconciliation or address.', 'zhs-site-audit-seo-diagnostics' ), implode( ', ', $types_list ) ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3 */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nDetected types: %3\$s. Adding sameAs social links and physical location links boosts AI credibility.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -2386,6 +2481,7 @@ class ZHS_Audit_Engine {
 			'page_url'       => $this->current_page_url,
 			'summary'        => __( 'JSON-LD script tags found, but unparseable or missing recognized Schema.org types.', 'zhs-site-audit-seo-diagnostics' ),
 			'details'        => sprintf(
+				/* translators: 1: Page name, 2: Page URL */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nPlease validate your JSON-LD using Google's Rich Results Test tool.", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url
@@ -2449,6 +2545,7 @@ class ZHS_Audit_Engine {
 		$has_copyright  = ( stripos( $html, '&copy;' ) !== false || stripos( $html, '©' ) !== false || stripos( $html, 'all rights reserved' ) !== false );
 
 		$signals = array();
+		/* translators: %s: Custom site title brand name */
 		if ( ! $is_default_title ) $signals[] = sprintf( __( 'Custom Brand Name: "%s"', 'zhs-site-audit-seo-diagnostics' ), esc_html( $site_title ) );
 		if ( $has_og_brand ) $signals[] = __( 'OG Site Name Aligned', 'zhs-site-audit-seo-diagnostics' );
 		if ( $has_about_link ) $signals[] = __( 'Discovered "About Us" Entity Link', 'zhs-site-audit-seo-diagnostics' );
@@ -2469,6 +2566,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'High AI & Knowledge Graph entity consistency detected.', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4 */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nDiscovered %3\$d entity signals: %4\$s. LLMs (ChatGPT, Gemini, Perplexity) can unambiguously identify your brand.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -2492,6 +2590,7 @@ class ZHS_Audit_Engine {
 				'page_url'       => $this->current_page_url,
 				'summary'        => __( 'Partial entity identity signals found across meta tags and markup.', 'zhs-site-audit-seo-diagnostics' ),
 				'details'        => sprintf(
+					/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3 */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nActive signals: %3\$s. Lacks explicit og:site_name consistency or dedicated About Us entity link.", 'zhs-site-audit-seo-diagnostics' ),
 					$this->current_page_name,
 					$this->current_page_url,
@@ -2513,6 +2612,7 @@ class ZHS_Audit_Engine {
 			'page_url'       => $this->current_page_url,
 			'summary'        => __( 'Weak brand entity definition! AI engines will struggle to identify your organization.', 'zhs-site-audit-seo-diagnostics' ),
 			'details'        => sprintf(
+				/* translators: 1: Page name, 2: Page URL */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nGeneric or missing site branding, lack of og:site_name, and no about or entity ownership markers found.", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url
@@ -2629,8 +2729,10 @@ class ZHS_Audit_Engine {
 			'impact'         => $impact,
 			'page_name'      => $this->current_page_name,
 			'page_url'       => $this->current_page_url,
+			/* translators: %s: Current page name */
 			'summary'        => sprintf( __( 'Unable to parse DOM markup for page: %s.', 'zhs-site-audit-seo-diagnostics' ), $this->current_page_name ),
 			'details'        => sprintf(
+				/* translators: 1: Page name, 2: Page URL */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nThe target page could not be parsed via DOMDocument during the scan.", 'zhs-site-audit-seo-diagnostics' ),
 				$this->current_page_name,
 				$this->current_page_url

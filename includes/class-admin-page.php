@@ -125,6 +125,7 @@ class ZHS_Audit_Admin_Page {
 					'selectAll'      => __( 'Select All', 'zhs-site-audit-seo-diagnostics' ),
 					'clearAll'       => __( 'Clear All', 'zhs-site-audit-seo-diagnostics' ),
 					'runAudit'       => __( 'Run Audit', 'zhs-site-audit-seo-diagnostics' ),
+					/* translators: %d: Number of selected pages */
 					'pagesSelected'  => __( '%d Pages Selected', 'zhs-site-audit-seo-diagnostics' ),
 					'affectedPages'  => __( 'Affected Pages', 'zhs-site-audit-seo-diagnostics' ),
 				),
@@ -145,7 +146,7 @@ class ZHS_Audit_Admin_Page {
 		if ( file_exists( $template_path ) ) {
 			include $template_path;
 		} else {
-			echo '<div class="notice notice-error"><p>' . esc_html__( 'SEO Inspector dashboard template missing.', 'zhs-site-audit-seo-diagnostics' ) . '</p></div>';
+			echo wp_kses_post( '<div class="notice notice-error"><p>' . esc_html__( 'SEO Inspector dashboard template missing.', 'zhs-site-audit-seo-diagnostics' ) . '</p></div>' );
 		}
 	}
 }
