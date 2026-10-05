@@ -461,7 +461,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 											<strong>
 												<?php
 												/* translators: 1: Number of affected pages, 2: Total number of scanned pages */
-												printf( esc_html__( 'Affected Pages (%1$d of %2$d scanned):', 'zhs-site-audit-seo-diagnostics' ), count( $affected_pages ), $total_scanned );
+												echo esc_html( sprintf( __( 'Affected Pages (%1$d of %2$d scanned):', 'zhs-site-audit-seo-diagnostics' ), count( $affected_pages ), (int) $total_scanned ) );
 												?>
 											</strong>
 										</span>
@@ -494,7 +494,7 @@ $last_audit      = ! empty( $initial_audit['formatted_date'] ) ? $initial_audit[
 									<span>
 										<?php
 										/* translators: %d: Total number of audited pages */
-										printf( esc_html__( 'Passed across all %d audited pages on your website.', 'zhs-site-audit-seo-diagnostics' ), $total_scanned );
+										echo esc_html( sprintf( __( 'Passed across all %d audited pages on your website.', 'zhs-site-audit-seo-diagnostics' ), (int) $total_scanned ) );
 										?>
 									</span>
 								</div>

@@ -602,8 +602,10 @@ class ZHS_Audit_Engine {
 				'status'              => $agg_status,
 				'score'               => $agg_score,
 				'impact'              => $first_check['impact'],
-				/* translators: %d: Total number of scanned pages */
-				'page_name'           => ( $mode === 'full_site' ) ? __( 'Full Website Audit', 'zhs-site-audit-seo-diagnostics' ) : sprintf( __( 'Multi-Page Audit (%d pages)', 'zhs-site-audit-seo-diagnostics' ), $total_pages ),
+				'page_name'           => ( $mode === 'full_site' )
+					? __( 'Full Website Audit', 'zhs-site-audit-seo-diagnostics' )
+					/* translators: %d: Total number of scanned pages */
+					: sprintf( __( 'Multi-Page Audit (%d pages)', 'zhs-site-audit-seo-diagnostics' ), $total_pages ),
 				'page_url'            => home_url( '/' ),
 				'summary'             => $agg_summary,
 				'details'             => $agg_details,
@@ -905,9 +907,8 @@ class ZHS_Audit_Engine {
 		$contact_page = get_page_by_path( 'contact' ) ?: get_page_by_path( 'contact-us' );
 		$contact_page_str = '';
 		if ( $contact_page && $contact_page->post_status === 'publish' ) {
-			$contact_page_str = "
-/* translators: 1: Contact page title, 2: Contact page URL */
-" . sprintf( __( 'Dedicated Contact Page found on site: "%1$s" (URL: %2$s)', 'zhs-site-audit-seo-diagnostics' ), get_the_title( $contact_page->ID ), get_permalink( $contact_page->ID ) );
+			/* translators: 1: Contact page title, 2: Contact page URL */
+			$contact_page_str = "\n" . sprintf( __( 'Dedicated Contact Page found on site: "%1$s" (URL: %2$s)', 'zhs-site-audit-seo-diagnostics' ), get_the_title( $contact_page->ID ), get_permalink( $contact_page->ID ) );
 		}
 
 		$count = count( $channels_found );
@@ -1348,9 +1349,8 @@ class ZHS_Audit_Engine {
 		$flagged_details = '';
 		if ( ! empty( $flagged_images ) ) {
 			$sample = array_slice( $flagged_images, 0, 5 );
-			$flagged_details = "
-/* translators: %s: Comma-separated list of flagged image sources */
-" . sprintf( __( 'Flagged image elements on this page: %s', 'zhs-site-audit-seo-diagnostics' ), implode( ', ', $sample ) );
+			/* translators: %s: Comma-separated list of flagged image sources */
+			$flagged_details = "\n" . sprintf( __( 'Flagged image elements on this page: %s', 'zhs-site-audit-seo-diagnostics' ), implode( ', ', $sample ) );
 			if ( count( $flagged_images ) > 5 ) {
 				/* translators: %d: Number of additional flagged images */
 				$flagged_details .= sprintf( __( ' (+%d more)', 'zhs-site-audit-seo-diagnostics' ), count( $flagged_images ) - 5 );
@@ -1380,9 +1380,8 @@ class ZHS_Audit_Engine {
 				}
 			}
 			if ( ! empty( $db_items ) ) {
-				$db_cross_check = "
-/* translators: %s: List of other pages with uncaptioned images */
-" . sprintf( __( 'Other pages with uncaptioned Media Library images: %s', 'zhs-site-audit-seo-diagnostics' ), implode( '; ', $db_items ) );
+				/* translators: %s: List of other pages with uncaptioned images */
+				$db_cross_check = "\n" . sprintf( __( 'Other pages with uncaptioned Media Library images: %s', 'zhs-site-audit-seo-diagnostics' ), implode( '; ', $db_items ) );
 			}
 		}
 
@@ -1424,8 +1423,8 @@ class ZHS_Audit_Engine {
 				'impact'         => 'high',
 				'page_name'      => $this->current_page_name,
 				'page_url'       => $this->current_page_url,
-				/* translators: 1: Number of images missing alt text, 2: Total number of images */
-				'summary'        => sprintf( __( '%d of %d images missing alt text or have generic file names.', 'zhs-site-audit-seo-diagnostics' ), ( $missing_alt + $junk_alt ), $total_imgs ),
+				/* translators: 1: Missing alt images count, 2: Total images count */
+				'summary'        => sprintf( __( '%1$d of %2$d images missing alt text or have generic file names.', 'zhs-site-audit-seo-diagnostics' ), ( $missing_alt + $junk_alt ), $total_imgs ),
 				'details'        => sprintf(
 					/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4, 5: Diagnostic detail value 5, 6: Diagnostic detail value 6 */
 					__( "Page: \"%1\$s\"\nURL: %2\$s\nFound %3\$d missing alt tags, %4\$d generic/file-name alts on this page.%5\$s%6\$s", 'zhs-site-audit-seo-diagnostics' ),
@@ -1450,8 +1449,8 @@ class ZHS_Audit_Engine {
 			'impact'         => 'high',
 			'page_name'      => $this->current_page_name,
 			'page_url'       => $this->current_page_url,
-			/* translators: 1: Number of missing alt images, 2: Total number of images */
-			'summary'        => sprintf( __( 'Significant image accessibility issues: %d missing alt tags out of %d images on this page.', 'zhs-site-audit-seo-diagnostics' ), $missing_alt, $total_imgs ),
+			/* translators: 1: Missing alt count, 2: Total images count */
+			'summary'        => sprintf( __( 'Significant image accessibility issues: %1$d missing alt tags out of %2$d images on this page.', 'zhs-site-audit-seo-diagnostics' ), $missing_alt, $total_imgs ),
 			'details'        => sprintf(
 				/* translators: 1: Page name, 2: Page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4, 5: Diagnostic detail value 5, 6: Diagnostic detail value 6 */
 				__( "Page: \"%1\$s\"\nURL: %2\$s\nOver 30%% of images lack alt attributes (%3\$d missing, %4\$d junk).%5\$s%6\$s", 'zhs-site-audit-seo-diagnostics' ),
@@ -1544,9 +1543,8 @@ class ZHS_Audit_Engine {
 		$flagged_text = '';
 		if ( ! empty( $flagged_inputs ) ) {
 			$sample = array_slice( $flagged_inputs, 0, 4 );
-			$flagged_text = "
-/* translators: %s: Comma-separated list of flagged form field names */
-" . sprintf( __( 'Flagged fields: %s', 'zhs-site-audit-seo-diagnostics' ), implode( ', ', $sample ) );
+			/* translators: %s: Comma-separated list of flagged form field names */
+			$flagged_text = "\n" . sprintf( __( 'Flagged fields: %s', 'zhs-site-audit-seo-diagnostics' ), implode( ', ', $sample ) );
 		}
 
 		if ( $unlabeled_count === 0 && $placeholder_only === 0 ) {
@@ -1692,8 +1690,10 @@ class ZHS_Audit_Engine {
 
 		if ( $h1_count > 1 || ! empty( $irregular_jumps ) ) {
 			$issues = array();
-			/* translators: 1: Number of H1 tags detected, 2: Sample H1 heading texts */
-			if ( $h1_count > 1 ) $issues[] = sprintf( __( '%d H1 tags detected: %s (recommended: exactly 1)', 'zhs-site-audit-seo-diagnostics' ), $h1_count, $h1_evidence );
+			if ( $h1_count > 1 ) {
+				/* translators: 1: Number of H1 tags detected, 2: List of H1 headings */
+				$issues[] = sprintf( __( '%1$d H1 tags detected: %2$s (recommended: exactly 1)', 'zhs-site-audit-seo-diagnostics' ), $h1_count, $h1_evidence );
+			}
 			/* translators: %s: Comma-separated list of skipped heading levels */
 			if ( ! empty( $irregular_jumps ) ) $issues[] = sprintf( __( 'Skipped heading levels: %s', 'zhs-site-audit-seo-diagnostics' ), implode( ', ', array_unique( $irregular_jumps ) ) );
 			/* translators: %d: Number of empty heading tags found */
@@ -2270,9 +2270,11 @@ class ZHS_Audit_Engine {
 				$sample_pages[] = sprintf( '"%s" (%s)', get_the_title( $sp->ID ), get_permalink( $sp->ID ) );
 			}
 		}
-		$sample_list_str = ! empty( $sample_pages ) ? "
-/* translators: %s: Semicolon-separated list of sample published pages */
-" . sprintf( __( 'Sample published pages in database: %s', 'zhs-site-audit-seo-diagnostics' ), implode( '; ', $sample_pages ) ) : '';
+		$sample_list_str = '';
+		if ( ! empty( $sample_pages ) ) {
+			/* translators: %s: Semicolon-separated list of sample published pages */
+			$sample_list_str = "\n" . sprintf( __( 'Sample published pages in database: %s', 'zhs-site-audit-seo-diagnostics' ), implode( '; ', $sample_pages ) );
+		}
 
 		// Calculate clean word count from front-end body
 		$word_count = 0;
@@ -2296,8 +2298,8 @@ class ZHS_Audit_Engine {
 				'impact'         => 'high',
 				'page_name'      => $this->current_page_name,
 				'page_url'       => $this->current_page_url,
-				/* translators: 1: Word count on this page, 2: Total published pages and posts count */
-				'summary'        => sprintf( __( 'Substantial content depth: %d words on this page across %d published pages.', 'zhs-site-audit-seo-diagnostics' ), $word_count, $total_published ),
+				/* translators: 1: Word count on page, 2: Total published pages count */
+				'summary'        => sprintf( __( 'Substantial content depth: %1$d words on this page across %2$d published pages.', 'zhs-site-audit-seo-diagnostics' ), $word_count, $total_published ),
 				'details'        => sprintf(
 					/* translators: 1: Audited page name, 2: Audited page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4, 5: Diagnostic detail value 5, 6: Diagnostic detail value 6, 7: Diagnostic detail value 7 */
 					__( "Audited Page: \"%1\$s\"\nURL: %2\$s\nWord count on this page: %3\$d words. Site catalog: %4\$d published items (%5\$d posts, %6\$d pages).%7\$s", 'zhs-site-audit-seo-diagnostics' ),
@@ -2324,8 +2326,8 @@ class ZHS_Audit_Engine {
 				'impact'         => 'medium',
 				'page_name'      => $this->current_page_name,
 				'page_url'       => $this->current_page_url,
-				/* translators: 1: Word count on this page, 2: Total published pages and posts count */
-				'summary'        => sprintf( __( 'Thin content risk: %d words on this page with %d total published posts/pages.', 'zhs-site-audit-seo-diagnostics' ), $word_count, $total_published ),
+				/* translators: 1: Word count on page, 2: Total published posts and pages */
+				'summary'        => sprintf( __( 'Thin content risk: %1$d words on this page with %2$d total published posts/pages.', 'zhs-site-audit-seo-diagnostics' ), $word_count, $total_published ),
 				'details'        => sprintf(
 					/* translators: 1: Audited page name, 2: Audited page URL, 3: Diagnostic detail value 3, 4: Diagnostic detail value 4 */
 					__( "Audited Page: \"%1\$s\"\nURL: %2\$s\nWord count: %3\$d words. Search engines favor comprehensive topic coverage (minimum 350-500 words for primary landing pages).%4\$s", 'zhs-site-audit-seo-diagnostics' ),
